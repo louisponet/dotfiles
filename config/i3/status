@@ -1,0 +1,28 @@
+general {
+  output_format = "i3bar"
+  color_good     = "#98971a"
+  color_degraded = "#FF8000"
+  color_bad      = "#FF0000"
+  colors         = true
+  interval       = 5
+}
+
+
+order += "cpu_usage"
+order += "disk /"
+order += "time"
+
+time {
+  format = "%b %d ∆ %H:%M:%S"
+}
+
+disk "/" {
+	format = "%avail"
+	prefix_type = "custom"
+	low_threshold = 2
+	threshold_type = "gbytes_avail"
+}
+cpu_usage {
+    format = "%cpu0 ∆ %cpu1 ∆ %cpu2 ∆ %cpu3 ∆ %cpu4 ∆ %cpu5 ∆ %cpu6 ∆ %cpu7"
+}
+

@@ -1,0 +1,6 @@
+[user]
+	email = louisponet@gmail.com
+	name = Louis Ponet
+[credential]
+	credentialStore = gpg
+	helper = store

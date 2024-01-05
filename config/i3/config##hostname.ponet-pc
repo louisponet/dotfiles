@@ -1,0 +1,222 @@
+# vim:filetype=i3
+# i3 config file (v4)
+set $mod Mod4
+font pango: Fira Code Retina 10
+set $editor kitty
+set $terminal kitty
+hide_edge_borders both
+
+# drag windows
+floating_modifier $mod
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# lock
+bindsym $mod+Shift+x exec i3lock --color 475263
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# split in horizontal orientation
+bindsym $mod+b split v
+
+# split in vertical orientation
+bindsym $mod+v split h
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen
+
+# change container layout
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+set $workspace1 "1"
+set $workspace2 "2"
+set $workspace3 "3"
+set $workspace4 "4"
+set $workspace5 "5"
+set $workspace6 "6"
+set $workspace7 "7"
+set $workspace8 "8"
+set $workspace9 "9"
+set $workspace10 "10"
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $workspace1
+bindsym $mod+Shift+2 move container to workspace $workspace2
+bindsym $mod+Shift+3 move container to workspace $workspace3
+bindsym $mod+Shift+4 move container to workspace $workspace4
+bindsym $mod+Shift+5 move container to workspace $workspace5
+bindsym $mod+Shift+6 move container to workspace $workspace6
+bindsym $mod+Shift+7 move container to workspace $workspace7
+bindsym $mod+Shift+8 move container to workspace $workspace8
+bindsym $mod+Shift+9 move container to workspace $workspace9
+bindsym $mod+Shift+0 move container to workspace $workspace10
+
+# switch to workspace
+bindsym $mod+1 workspace $workspace1
+bindsym $mod+2 workspace $workspace2
+bindsym $mod+3 workspace $workspace3
+bindsym $mod+4 workspace $workspace4
+bindsym $mod+5 workspace $workspace5
+bindsym $mod+6 workspace $workspace6
+bindsym $mod+7 workspace $workspace7
+bindsym $mod+8 workspace $workspace8
+bindsym $mod+9 workspace $workspace9
+bindsym $mod+0 workspace $workspace10
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+# restart i3 inplace
+bindsym $mod+Shift+r restart
+
+# exit i3
+bindsym $mod+Shift+e exec $HOME/.config/i3/scripts/exit_menu
+
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+    bindsym h resize shrink width 10 px or 10 ppt
+    bindsym j resize grow height 10 px or 10 ppt
+    bindsym k resize shrink height 10 px or 10 ppt
+    bindsym l resize grow width 10 px or 10 ppt
+
+    bindsym Lefj resize shrink width 10 px or 10 ppt
+    bindsym Down resize grow height 10 px or 10 ppt
+    bindsym Up resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# resize mode
+bindsym $mod+r mode "resize"
+
+set $bg-color 	         #1b7ea6
+set $inactive-bg-color   #2f343f
+set $text-color          #6EB5FF
+set $inactive-text-color #676E7D
+set $urgent-bg-color     #E53935
+
+# window colors
+#                       border              background         text                 indicator
+client.focused          $bg-color           $bg-color          $text-color          "#00ff00"
+client.unfocused        $inactive-bg-color $inactive-bg-color $inactive-text-color  "#00ff00"
+client.focused_inactive $inactive-bg-color $inactive-bg-color $inactive-text-color  "#00ff00"
+client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          "#00ff00"
+set $orange #d64937
+set $bgnorm #313131
+set $blue   #819FF7
+set $bfoc   #7f7f7f
+set $bgunf  #3f3f3f
+set $bunf   #333333
+set $white  #FFFFFF
+
+# window colors
+#                       border              background         text                 indicator
+bar {
+  status_command i3status -c $HOME/.config/i3/status
+  # status_command i3blocks -c /home/ponet/.config/i3/i3blocks.conf
+  position top
+  mode     dock
+  modifier $mod
+  workspace_buttons yes
+
+  font pango:Fira Code Retina 10
+
+  colors  {
+
+	 background #20293A
+     statusline #aaaaaa
+     separator  #70798A
+     
+#  class            | border  |  background  |   text  |
+#-------------------|---------|--------------|---------|
+
+     focused_workspace  #ff8c00 #20293A #ffffff
+     active_workspace   #ff8c00 #20293A #ffffff 
+     inactive_workspace #20293A #20293A #aaaaaa
+     urgent_workspace   #20293A #20293A #FCF5C7
+		}
+}
+# sticky window
+# bindsym $mod+Shift+s sticky toggle
+
+
+# default workspaces
+assign [class="Firefox"] $workspace6
+assign [class="GitKraken"] $workspace8
+assign [class="Slack"] $workspace7
+focus_follows_mouse no
+# workspace default monitors
+workspace $workspace1 output DP-0
+workspace $workspace2 output DP-0
+workspace $workspace3 output DP-0
+workspace $workspace4 output DP-0
+workspace $workspace5 output DP-0
+workspace $workspace6 output  DP-4
+workspace $workspace7 output  DP-4
+workspace $workspace8 output  DP-4
+workspace $workspace9 output  DP-2
+workspace $workspace10 output DP-2
+
+# key-bindings
+bindsym $mod+Shift+f exec brave
+bindsym $mod+Shift+n exec nautilus
+bindsym $mod+Shift+s exec slack
+bindsym $mod+Shift+z exec zeal
+bindsym $mod+Shift+b exec /home/ponet/bin/startup_setup
+bindsym $mod+Return exec kitty
+bindsym $mod+q kill
+bindsym Print exec screenshot
+bindsym $mod+d exec rofi -show run -theme ~/.config/rofi/onedark.rasi -font "Fira Code Retina 18"
+
+
+exec --no-startup-id skype
+
+# Keys
+exec_always xmodmap -e "clear lock" #disable caps lock switch
+exec_always xmodmap -e "keysym Caps_Lock = Escape" #set caps_lock as escape
+exec --no-startup-id compton -f
+#exec $HOME/bin/startup_setup
+#
+##exec --no-startup-id compton -fxec_always --no-startup-id "pgrep --exact xev || xev -root -event randr | grep --line-buffered ScreenChangeNotify | while read change; do pkill -RTMIN+4 i3blocks; done"
+#
+## startup
+#
+#exec_always xrandr --dpi 159 --output HDMI-0 --off --output DP-0 --mode 3840x2160 --rate 60 --pos 2940x0 --scale 1.25x1.25 --primary --output HDMI-1 --mode 1680x1050 --rate 60 --pos 0x0 --scale 1.75x1.75
+exec_always --no-startup-id xset r rate 230 45
+#
+# Desktop screenshot
+bindsym --release Print exec "scrot ~/Pictures/Screenshots/$(date --iso-8601='seconds').png -m -e 'xclip -selection c -t image/png < $f'"
+# Choose window
+bindsym --release Mod1+Sys_Req exec "import -window `xwininfo | awk '/.*Window id:.*/ {print $4}'` ~/Pictures/Screenshots/$(date --iso-8601='seconds').png"
+# Selection screenshot
+bindsym --release Shift+Print exec "scrot ~/Pictures/Screenshots/$(date --iso-8601='seconds').png -s -e 'xclip -selection c -t image/png < $f'"
+#exec_always $HOME/bin/startup_setup
+
+# Brightness
+bindsym $mod+F1 exec $HOME/bin/dimmer.sh 1
+bindsym $mod+F2 exec $HOME/bin/dimmer.sh 0.7 n
+bindsym $mod+F3 exec $HOME/bin/dimmer.sh 0.4 n
+bindsym $mod+F4 exec sleep 1 && xset -display $DISPLAY dpms force off; read temp; xset -display $DISPLAY dpms force on
+
