@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [[ $SHELL != "/bin/fish" ]]; then
+	echo "Changing shell from $SHELL to /bin/zsh"
+	chsh --shell /bin/fish
+fi

@@ -1,15 +1,67 @@
+- defaults:
+    link:
+      create: true
+      relink: true
+
 - clean: ['~']
+
+- if:
+  - cond: 'command -v pacman'
+    met:
+      - pacman:
+        - fish
+        - tmux
+        - git
+        - btop
+        - lazygit
+  - cond: 'command -v apt'
+    met:
+      - apt:
+        - fish
+        - tmux
+        - git
+        - btop
+        - lazygit
+
+- shell:
+    - [chsh -s $(which fish), Making fish the default shell]
+
+- rust:
+  - stable:
+    - targets:
+      - x86_64-unknown-linux-gnu
+    - components:
+      - rust-analysis
+      - rls
+      - rust-src
+  - nightly:
+    - targets:
+      - x86_64-unknown-linux-gnu
+    - components:
+      - rust-analysis
+      - rls
+      - rust-src
+
+- cargo:
+  - cargo-update
+  - clippy
+  - bacon
+  - du-dust
+  - zoxide
+  - sccache
+  - mprocs
+  - rustfmt
+  - rustsym
 
 - link:
     ~/.profile: profile
-    ~/.bashrc: bashrc
     ~/.gitconfig: gitconfig
     ~/.ssh/config:
         path: ssh/config
         create: true
     ~/.tmux.conf: tmux.conf
     ~/.config/i3:
-        path: config/i3/
+        path: i3
         create: true
 
 

@@ -2,3 +2,21 @@
 	path = dotbot
 	url = https://github.com/anishathalye/dotbot
 	ignore = dirty
+[submodule "plugins/dotbot-include"]
+	path = plugins/dotbot-include
+	url = https://gitlab.com/gnfzdz/dotbot-include.git
+[submodule "plugins/dotbot-if"]
+	path = plugins/dotbot-if
+	url = https://github.com/wonderbeyond/dotbot-if.git
+[submodule "plugins/dotbot-apt"]
+	path = plugins/dotbot-apt
+	url = https://github.com/bryant1410/dotbot-apt
+[submodule "plugins/dotbot-pacaur"]
+	path = plugins/dotbot-pacaur
+	url = https://github.com/ajlende/dotbot-pacaur
+[submodule "plugins/dotbot-rust"]
+	path = plugins/dotbot-rust
+	url = https://github.com/alexcormier/dotbot-rust
+[submodule "plugins/dotbot-git"]
+	path = plugins/dotbot-git
+	url = https://github.com/DrDynamic/dotbot-git.git
