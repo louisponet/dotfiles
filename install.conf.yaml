@@ -14,6 +14,7 @@
             - pacman -S --noconfirm git
             - pacman -S --noconfirm btop
             - pacman -S --noconfirm lazygit
+            - pacman -S --noconfirm kitty
     - cond: 'command -v apt'
       met:
         - shell:
@@ -22,6 +23,7 @@
           - apt -y install git
           - apt -y install btop
           - apt -y install lazygit
+          - apt -y install kitty
   - shell:
       - chsh -s $(which fish)
 - rust:
@@ -68,6 +70,20 @@
           - ln -s ~/Software/kakoune/src/kak ~/bin
 - link:
     ~/.gitconfig: gitconfig
-    ~/.tmux.conf: tmux.conf
+    ~/.tmux.conf: tmux/tmux.conf
+    ~/.tmux: tmux/tmux
+    ~/.tmux-themepack: tmux/tmux-themepack
     ~/.config/i3: i3
     ~/bin/julia: bin/julia
+    ~/.julia/config/startup.jl: julia/startup.jl
+    ~/.config/fish: fish
+    ~/.config/kitty: kitty
+    ~/.config/kak-lsp: kak-lsp
+    ~/.config/kak: kak
+- if:
+    cond: ls ~/.dotfiles_local/
+    met:
+      - shell:
+          - command: ~/.dotfiles_local/install
+            stdout: true
+            stderr: true
