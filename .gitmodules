@@ -5,9 +5,6 @@
 [submodule "plugins/dotbot-include"]
 	path = plugins/dotbot-include
 	url = https://gitlab.com/gnfzdz/dotbot-include.git
-[submodule "plugins/dotbot-if"]
-	path = plugins/dotbot-if
-	url = https://github.com/wonderbeyond/dotbot-if.git
 [submodule "plugins/dotbot-apt"]
 	path = plugins/dotbot-apt
 	url = https://github.com/bryant1410/dotbot-apt
@@ -20,3 +17,6 @@
 [submodule "plugins/dotbot-git"]
 	path = plugins/dotbot-git
 	url = https://github.com/DrDynamic/dotbot-git.git
+[submodule "plugins/dotbot-sudo"]
+	path = plugins/dotbot-sudo
+	url = https://github.com/DrDynamic/dotbot-sudo.git

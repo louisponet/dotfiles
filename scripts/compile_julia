@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/Software/julia
+make clean
+make -j8

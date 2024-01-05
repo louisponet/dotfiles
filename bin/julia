@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+if test -f "Project.toml"  && test -f "Manifest.toml"; then
+    JULIA_EXE="${HOME}/Software/julia/usr/bin/julia --project=./"
+else
+    JULIA_EXE="${HOME}/Software/julia/usr/bin/julia"
+fi
+export JULIA_NUM_THREADS=$(nproc)
+$JULIA_EXE "$@"
+

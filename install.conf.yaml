@@ -2,30 +2,28 @@
     link:
       create: true
       relink: true
-
 - clean: ['~']
-
-- if:
-  - cond: 'command -v pacman'
-    met:
-      - pacman:
-        - fish
-        - tmux
-        - git
-        - btop
-        - lazygit
-  - cond: 'command -v apt'
-    met:
-      - apt:
-        - fish
-        - tmux
-        - git
-        - btop
-        - lazygit
-
-- shell:
-    - [chsh -s $(which fish), Making fish the default shell]
-
+- sudo:
+  - if:
+    - cond: 'command -v pacman'
+      met:
+        - shell:
+            - [pacman -Syy, updating pacman]
+            - pacman -S --noconfirm fish
+            - pacman -S --noconfirm tmux
+            - pacman -S --noconfirm git
+            - pacman -S --noconfirm btop
+            - pacman -S --noconfirm lazygit
+    - cond: 'command -v apt'
+      met:
+        - shell:
+          - apt -y install fish
+          - apt -y install tmux
+          - apt -y install git
+          - apt -y install btop
+          - apt -y install lazygit
+  - shell:
+      - chsh -s $(which fish)
 - rust:
   - stable:
     - targets:
@@ -41,24 +39,35 @@
       - rust-analysis
       - rls
       - rust-src
-
-- cargo:
-  - cargo-update
-  - clippy
-  - bacon
-  - du-dust
-  - zoxide
-  - sccache
-  - mprocs
-  - rustfmt
-  - rustsym
-
+- if:
+    cond: 'command -v sccache'
+    unmet:
+      - cargo:
+        - cargo-update
+        - bacon
+        - du-dust
+        - zoxide
+        - sccache
+        - mprocs
+        - rustfmt
+        - rustsym
+- create:
+    - ~/Software
+    - ~/bin
+- if:
+    cond: ls ~/Software/kakoune
+    unmet:
+      - git:
+          '~/Software/kakoune':
+            url: 'https://github.com/mawww/kakoune'
+            branch: v2023.08.05
+      - shell:
+          - command: scripts/compile_kakoune
+            stdout: true
+            stderr: true
+          - ln -s ~/Software/kakoune/src/kak ~/bin
 - link:
-    ~/.profile: profile
     ~/.gitconfig: gitconfig
     ~/.tmux.conf: tmux.conf
-    ~/.config/i3:
-        path: i3
-        create: true
-
-
+    ~/.config/i3: i3
+    ~/bin/julia: bin/julia

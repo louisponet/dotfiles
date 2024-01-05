@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/Software/kakoune
+make clean
+make -j8
