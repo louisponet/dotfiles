@@ -56,9 +56,6 @@
 - link:
     ~/.profile: profile
     ~/.gitconfig: gitconfig
-    ~/.ssh/config:
-        path: ssh/config
-        create: true
     ~/.tmux.conf: tmux.conf
     ~/.config/i3:
         path: i3
