@@ -1,0 +1,2 @@
+/home/ponet/bin/julia --startup-file=no --color=no
+julia>

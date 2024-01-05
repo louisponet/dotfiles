@@ -1,0 +1,1 @@
+/home/ponet/.dotfiles_local/fish/local.fish

@@ -1,0 +1,763 @@
+evaluate-commands %sh{
+    plugins="$kak_config/plugins"
+    mkdir -p "$plugins"
+    [ ! -e "$plugins/plug.kak" ] && \
+        git clone -q https://github.com/andreyorst/plug.kak.git "$plugins/plug.kak"
+    printf "%s\n" "source '$plugins/plug.kak/rc/plug.kak'"
+}
+plug "andreyorst/plug.kak" noload
+# plugins
+
+plug "andreyorst/smarttab.kak" defer smarttab %{
+	set-option global softtabstop 4 # or other preferred value
+} config %{
+    # these languages will use `expandtab' behavior
+    hook global WinSetOption filetype=(rust|markdown|kak|lisp|scheme|sh|perl|julia|python) expandtab
+    hook global WinSetOption filetype=yaml %{
+        expandtab
+        set-option buffer indentwidth 2
+    }
+    # these languages will use `noexpandtab' behavior
+    hook global WinSetOption filetype=(makefile|gas) noexpandtab
+    # these languages will use `smarttab' behavior
+    hook global WinSetOption filetype=(c|cpp) smarttab
+}
+
+source "%val{config}/expand.kak"
+source "%val{config}/sudo-write.kak"
+source "%val{config}/vertical-selection.kak"
+plug "occivink/kakoune-phantom-selection"
+
+# gdb
+source "%val{config}/gdb.kak"
+gdb-enable-autojump
+hook global GlobalSetOption gdb_session_started=true %{
+    map global normal <F10>   ': gdb-next<ret>'
+    map global normal <F11>   ': gdb-step<ret>'
+    map global normal <s-F11> ': gdb-finish<ret>'
+    map global normal <F9>    ': gdb-toggle-breakpoint<ret>'
+    map global normal <F5>    ': gdb-continue<ret>'
+}
+hook global GlobalSetOption gdb_session_started=false %{
+    unmap global normal <F10>   ': gdb-next<ret>'
+    unmap global normal <F11>   ': gdb-step<ret>'
+    unmap global normal <s-F11> ': gdb-finish<ret>'
+    unmap global normal <F9>    ': gdb-toggle-breakpoint<ret>'
+    unmap global normal <F5>    ': gdb-continue<ret>'
+}
+set-option global modelinefmt '%val{bufname} %val{cursor_line}:%val{cursor_char_column} {{context_info}} {{mode_info}} {red,default}%opt{gdb_indicator}{default,default}- %val{client}@[%val{session}]'
+
+#finding
+source "%val{config}/find.kak"
+
+# General
+set-option global ui_options %{ "ncurses_enable_mouse" = "true"}
+hook global ModeChange .*:insert:normal %{
+    set-option global idle_timeout 750
+}
+hook global ModeChange .*:normal:insert %{
+    set-option global idle_timeout 200
+}
+
+def -hidden move-lines-down %{ exec -draft 'x<a-_><a-:>Z;ezjxdzP' }
+def -hidden move-lines-up %{ exec -draft 'x<a-_><a-:><a-;>Z;bzkxdzp' }
+
+map global normal <a-q> ': expand<ret>'
+map global normal f     ": phantom-selection-add-selection<ret>"
+map global normal F     ": phantom-selection-select-all; phantom-selection-clear<ret>"
+map global normal <a-f> ": phantom-selection-iterate-next<ret>"
+map global normal <a-F> ": phantom-selection-iterate-prev<ret>"
+# this would be nice, but currrently doesn't work
+# see https://github.com/mawww/kakoune/issues/1916
+#map global insert <a-f> "<a-;>: phantom-sel-iterate-next<ret>"
+#map global insert <a-F> "<a-;>: phantom-sel-iterate-prev<ret>"
+# so instead, have an approximate version that uses 'i'
+map global insert <a-f> "<esc>: phantom-sel-iterate-next<ret>i"
+map global insert <a-F> "<esc>: phantom-sel-iterate-prev<ret>i"
+map global normal w     <a-i>w
+map global normal <a-w> <a-i><a-w>
+map global normal W     '"_s.<ret><a-i>w'
+map global normal <a-W> '"_s.<ret><a-i><a-w>'
+map global normal t ': move-lines-down<ret>'
+map global normal T ': move-lines-up<ret>'
+map global normal <c-e> f
+map global normal <a-e> <a-f>
+# keybindings
+map global normal <backspace> <,>
+# map global normal <space> <,>
+map global user f ':prompt "grep in files:" %{find %val{text}}<ret>'
+map global user X x
+map global normal <s-tab> '<c-o>'
+map global normal D ';xd'
+map global normal Y ';xy'
+map global normal '#' :comment-line<ret>
+map global normal <c-n> '<a-i>w\"/yn'
+map global normal N '<a-n>'
+map global normal <a-n> '<s-n>'
+map -docstring line global object l '<esc>gi<s-g>l'
+map global user -docstring 'D full function' d '<a-i>w<s-m>d'
+map global user -docstring 'find next match' n ':find-next-match<ret>'
+map global user -docstring 'find previous match' <N> ':find-previous-match<ret>'
+map global user -docstring 'focus find buffer' <F> ':try %{focus %opt{toolsclient}}<ret>'
+map global normal <minus> r
+map global normal <_> R
+map global normal ';' ':'
+map global normal ':' ';'
+
+
+map global normal <c-m> ': make<ret>'
+# Keybindings to allow goto with shift (because i'm slow)
+# map global goto -docstring 'line end' <L> l
+# map global goto -docstring 'line begin' <H> h
+# map global goto -docstring 'buffer top' <K> k
+# map global goto -docstring 'buffer end' j e
+# map global goto -docstring 'buffer end' <J> j
+# map global goto -docstring 'line non blank start' <I> i
+
+addhl global/search group
+hook global RegisterModified '/' %{
+    # the register may not contain a valid regex
+    try %{
+        addhl -override global/search regex "%reg{/}" 0:SearchRegister
+    } catch %{
+        addhl -override global/search group
+    }
+}
+
+addhl global/curword group
+# highlight current word
+def -hidden update-curword %{
+    eval -no-hooks -save-regs / -draft %{
+        try %{
+            exec -save-regs '' '<a-i>w*'
+            addhl -override global/curword regex "%reg{/}" 0:CurWord
+        } catch %{
+            addhl -override global/curword group
+        }
+    }
+}
+hook global NormalIdle '' update-curword
+hook global InsertIdle '' update-curword
+
+def align -params 1 -docstring 'align selection' %{
+	execute-keys "s%arg{1}<ret>&"
+}
+# alias
+alias global x write-quit
+# softw wrap
+addhl global/ wrap
+addhl global/linehighlight line '%val{cursor_line}' cursorline
+# commands
+# more control over new command
+def vnew -params .. -command-completion -docstring '
+vnew [<commands>]: create a new kakoune client
+The ''terminal'' alias is being used to determine the user''s preferred terminal emulator
+The optional arguments are passed as commands to the new client
+The window will be split vertically'\
+%{
+    try %{
+	    hterminal kak -c %val{session} -e "%arg{@}"
+    } catch %{
+        fail "The 'vterminal' alias must be defined to use this command"
+    }
+}
+def hnew -params .. -command-completion -docstring '
+vnew [<commands>]: create a new kakoune client
+The ''terminal'' alias is being used to determine the user''s preferr terminal emulator
+The optional arguments are passed as commands to the new client
+The window will be split horizontally'\
+%{
+    try %{
+	    vterminal kak -c %val{session} -e "%arg{@}"
+    } catch %{
+        fail "The 'hterminal' alias must be defined to use this command"
+    }
+}
+def vedit -file-completion -params 1 %{
+    vnew edit %arg{@}
+}
+def hedit -file-completion -params 1 %{
+    hnew edit %arg{@}
+}
+def shcmd -params .. -shell-completion -docstring '%sh{params}' %{
+    echo %sh{"$@"}
+}
+source "%val{config}/julia.kak"
+def vremote-julia %{
+	rvtr '-Y ponet@10.255.9.115'
+	nop %sh{sleep 1}
+	julia-start
+ 	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+}
+def hremote-julia %{
+	rhtr '-Y ponet@10.255.9.115'
+	nop %sh{sleep 1}
+	julia-start
+ 	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+}
+
+def tmux-reset-ide-julia %{
+    focus tools
+    # nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+
+    focus jump
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+    focus client0
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+}
+
+def tmux-reset-ide-c %{
+
+    focus client0
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    focus jump
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    focus tools
+    # nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    focus client0
+}
+
+def tmux-reset-ide-r %{
+
+    focus jump
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    focus main
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    focus main
+}
+
+def tmux-focus-julia %{
+    focus client0
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 10 \/ 100)}
+    nop %sh{tmux select-pane -D}
+}
+def tmux-focus-tools %{
+    focus tools
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 80 \/ 100)}
+}
+def tmux-focus-hover %{
+    focus lsp
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 80 \/ 100)}
+}
+
+def jide %{
+	vnew %{rename-client jump
+	                         set global jumpclient jump
+	                         hnew %{rename-client tools
+	                         set global toolsclient tools
+	                         nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}
+	                         focus client0}}
+
+	focus client0
+ 	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}
+	focus client0
+	julia-horizontal -O3
+    map global user h ':lsp-hover<ret>'
+    map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
+    map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
+    map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
+    map global user J ': tmux-focus-julia<ret>' -docstring 'focus Julia'
+    map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
+    map global user <space> ": tmux-reset-ide-julia<ret>" -docstring 'reset ide windows'
+	# rename-client julia-repl
+	focus client0
+}
+def cide %{
+	vnew %{rename-client jump
+	                         set global jumpclient jump
+	                         vnew %{rename-client tools
+	                         set global toolsclient tools
+	                         nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 33 \/ 100)}
+	                         focus client0}}
+
+	focus client0
+    map global user h ': nop %sh{tmux select-pane -L}<ret>' -docstring 'tmux select left'
+    map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
+    map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
+    map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
+    map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
+    map global user E ': kill' -docstring 'Exit ide'
+    map global user <space> ": tmux-reset-ide-c<ret>" -docstring 'reset ide windows'
+    tmux-reset-ide-c
+	focus client0
+}
+
+#rust
+hook global WinSetOption filetype=rust %{
+	set-option buffer makecmd 'cargo run'
+    set-option global gdb_program 'rust-gdb'
+    hook global BufCreate .*bin/.*\.rs %{
+        map buffer normal <C-F5> ': nop %sh{cargo build }<ret>: gdb-start'
+    }
+}
+
+def ride %{
+    rename-client jump
+    set global jumpclient jump
+    set global toolsclient jump
+	vnew %{rename-client main}
+	nop %sh{tmux split-window -h 'bacon'}
+
+    map global user h ': nop %sh{tmux select-pane -L}<ret>' -docstring 'tmux select left'
+    map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
+    map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
+    map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
+    map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
+    map global user E ': kill' -docstring 'Exit ide'
+    map global user <space> ": tmux-reset-ide-r<ret>" -docstring 'reset ide windows'
+    tmux-reset-ide-r
+	focus main
+}
+
+def jenv %{
+	julia-vertical -O3
+	focus client0
+}
+def rjide %{
+	hremote-julia
+	vnew edit -scratch j
+ 	focus client0
+}
+def exit-ide %{
+	repl-send-text 'exit()
+'
+	kill
+}
+
+# source "%val{config}/python.kak"
+
+# def pide %{
+# 	vnew %{rename-client jump
+# 	                         set global jumpclient jump
+# 	                         hnew %{rename-client tools
+# 	                         set global toolsclient tools
+# 	                         nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}}}
+
+# 	focus client0
+#  	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}
+# 	focus client0
+# 	python-horizontal -O3
+# 	# rename-client julia-repl
+# 	focus client0
+# }
+
+source "%val{config}/verdi.kak"
+def vide %{
+	vnew  %{rename-client jump
+	                         set global jumpclient jump
+	                         hnew  %{rename-client tools
+	                         set global toolsclient tools
+	                         nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}}}
+ 	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}
+	focus client0
+	verdi-horizontal
+	# rename-client julia-repl
+	focus client0
+}
+
+# write and delete buffer
+def wdb %{
+    write
+    delete-buffer
+}
+hook -group julia-ide global WinSetOption filetype=julia %{
+	map global julia i ':jide<ret>' -docstring 'start julia ide'
+	map global julia R ':rjide<ret>' -docstring 'start remote julia ide'
+	map global julia r ':focus julia-repl' -docstring 'focus REPL'
+	map global julia E ":exit-ide<ret>" -docstring 'close ide'
+}
+hook -group verdi-ide global WinSetOption filetype=python %{
+	map global verdi E ":exit-ide<ret>" -docstring 'close ide'
+}
+#julia stuff
+#set-face global Search white,blue
+#set-face global PrimarySelectionSearch white,blue
+# Hooks
+# Tab stuff
+hook global BufCreate .* %{
+    smarttab
+}
+hook global InsertCompletionShow .* %{
+    try %{
+        # this command temporarily removes cursors preceded by whitespace;
+        # if there are no cursors left, it raises an error, does not
+        # continue to execute the mapping commands, and the error is eaten
+        # by the `try` command so no warning appears.
+        execute-keys -draft 'h<a-K>\h<ret>'
+        map window insert <tab> <c-n>
+        map window insert <s-tab> <c-p>
+    }
+}
+hook global InsertCompletionHide .* %{
+    unmap window insert <tab> <c-n>
+    unmap window insert <s-tab> <c-p>
+}
+#hook global InsertChar \t %{ exec -draft -itersel h@ }
+#ok
+#kk
+# tmux stuff
+# 
+hook global KakBegin .*  %sh{
+    if [ -n "$TMUX" ]; then
+        echo "
+            alias global focus tmux-focus
+            alias global terminal tmux-terminal-horizontal
+            alias global hterminal tmux-terminal-horizontal	
+            alias global vterminal tmux-terminal-vertical
+        "
+    fi
+}
+#copy to system clipboard
+# System clipboard handling
+# ─────────────────────────
+evaluate-commands %sh{
+    case $(uname) in
+        Linux) copy="xclip -i -sel clip"; paste="xclip -o -sel clip" ;;
+        Darwin)  copy="pbcopy"; paste="pbpaste" ;;
+    esac
+    printf "map global user -docstring 'paste (after) from clipboard' p '!%s<ret>'\n" "$paste"
+    printf "map global user -docstring 'paste (before) from clipboard' P '<a-!>%s<ret>'\n" "$paste"
+    printf "map global user -docstring 'yank to clipboard' y '<a-|>%s<ret>:echo -markup %%{{Information}copied selection to X11 clipboard}<ret>'\n" "$copy"
+    printf "map global user -docstring 'replace from clipboard' R '|%s<ret>'\n" "$paste"
+}
+set global tabstop 4
+set global indentwidth 4
+
+set global BOM none
+set global eolformat lf
+
+set global autoinfo command|onkey
+set -add global ui_options terminal_set_title=no
+
+set global scrolloff 2,5
+
+# preserve indent level
+# hook global InsertChar \n %{ try %{ exec -itersel -draft ';K<a-&>' } }
+
+# def -hidden backspace-with-indentwidth %{
+#     eval -itersel %{
+#         try %{
+#             # will only succeed at the beginning of the buffer -> nothing to do
+#             exec -draft ';H<a-k>\A.\z<ret>'
+#         } catch %{
+#             # if there is nothing but horizontal whitespace between character to the left and beginning of line,
+#             # delete in increments of indentwidth
+#             exec -draft "hGh<a-k>\A[ \t]+\z<ret>s(\t| {1,%opt{indentwidth}})<ret>,d"
+#         } catch %{
+#             # regular case, delete previous character
+#             exec -draft 'hd'
+#         }
+#     }
+# }
+# map global insert <backspace> '<a-;>: backspace-with-indentwidth<ret>'
+# map global insert <s-backspace> '<a-;>: backspace-with-indentwidth<ret>'
+
+map global insert <tab> '<a-;><a-gt>'
+map global insert <s-tab> '<a-;><lt>'
+
+source "%val{config}/remote-tmux.kak"
+alias global rvtr remote-tmux-repl-horizontal
+alias global rhtr remote-tmux-repl-vertical
+#colorscheme
+colorscheme qiita
+declare-option -hidden regex curword
+set-face global CurWord default,rgb:26343B
+hook global NormalIdle .* %{
+    eval -draft %{ try %{
+        exec <space><a-i>w <a-k>\A\w+\z<ret>
+        set-option buffer curword "\b\Q%val{selection}\E\b"
+    } catch %{
+        set-option buffer curword ''
+    } }
+}
+add-highlighter global/ dynregex '%opt{curword}' 0:CurWord
+#taken from occivink kakrc
+# stop c and d from yanking
+# move line up down
+
+
+def scratch -docstring "Open a scratch buffer" -params ..1 %{
+    try %{
+        eval %sh{ [ -z "$1" ] && printf fail }
+        edit -scratch %arg{1}
+    } catch %{
+        edit -scratch *scratch*
+    }
+}
+def kakrc -docstring "Open kakrc" %{
+    edit ~/.config/kak/kakrc
+}
+addhl global/ number-lines -hlcursor
+
+addhl global/ show-matching
+
+def -hidden smart-star -params 1 %{
+    try %{
+        exec -draft <a-space>
+        eval -no-hooks -draft -save-regs '"' %{
+            exec -save-regs '' "%arg{1}""""*"
+            edit -scratch *smart-star-temp*
+            exec '<a-P>)<a-space>i|<esc>'
+        }
+        try %{ exec -buffer *smart-star-temp* -save-regs '' "%%H""%val{register}/<c-r>.<ret>" }
+        db *smart-star-temp*
+    } catch %{
+        exec -save-regs '' """%val{register}%arg{1}"
+    }
+}
+map global normal * ': smart-star *<ret>'
+map global normal <a-*> ': smart-star <lt>a-*><ret>'
+map -docstring "select 🡓"           global user v     ': select-down<ret>'
+map -docstring "select 🡑"           global user <a-v> ': select-up<ret>'
+map -docstring "select 🡓🡑"          global user V     ': select-vertically<ret>'
+# WAKAtime
+# source "%val{config}/wakatime.kak"
+#powerline
+plug "andreyorst/powerline.kak" defer powerline %{
+    hook -once global WinCreate .* %{
+        powerline-theme solarized-dark
+        powerline-separator arrow
+        powerline-format line_column position mode_info bufname filetype
+        # powerline-toggle line_column off
+    } config %{
+        powerline-start
+    }
+}
+plug 'delapouite/kakoune-cd' %{
+  # Suggested mapping
+  map global user c ': enter-user-mode cd<ret>' -docstring 'cd'
+  # Suggested aliases
+  alias global cdb change-directory-current-buffer
+  alias global cdr change-directory-project-root
+  alias global ecd edit-current-buffer-directory
+  alias global pwd print-working-directory
+}
+# Suggested hook
+source "%val{config}/bufferinfo.kak"
+# hook global WinDisplay .* info-buffers
+# Suggested mappings
+#map global user b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
+#map global user B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
+# Suggested aliases
+alias global bd delete-buffer
+alias global bf buffer-first
+alias global bl buffer-last
+alias global bo buffer-only
+alias global bo! buffer-only-force
+map global normal q ':enter-buffers-mode<ret>'
+map global buffers q ga -docstring 'alternate'
+def write-if-file %{
+	try %{
+		evaluate-commands %sh{
+			if [ -f "$kak_buffile" ];then
+				echo "write"
+			fi
+		}
+	}
+}
+#autosave
+def autosave-start %{
+	# hook global -group autosave ModeChange .*:insert:.* %{write-if-file}
+	hook global -group autosave NormalIdle .* %{write-if-file}
+}
+def autosave-stop %{
+	remove-hooks global autosave
+}
+autosave-start
+# Documentation Julia
+def makedoc %{
+	# echo '%val{buffile}\/'
+    # echo %sh{julia --color=yes $kak_buffile/../make.jl}
+    evaluate-commands %sh{
+	    output=$(mktemp -d -t kak-temp-XXXXXXX)/fifo
+	    mkfifo ${output}
+	    {
+	    	dir="$(dirname $kak_buffile)"
+	    	julia --color=yes $dir/../make.jl &> ${output}
+	    } > /dev/null 2>&1 < /dev/null &
+	    echo "edit! -fifo ${output} *makedoc-output*
+	    	  hook buffer BufClose .* %{nop %sh{rm -r $(dirname ${output})}}"
+    }
+}
+#latex
+hook global WinSetOption filetype=latex %{
+    set-option buffer makecmd "pdflatex -output-directory %sh{echo $(dirname ${kak_buffile})} %val{buffile}"
+}
+
+#faces
+#
+#
+hook global ModeChange .*:insert %{
+	face global PrimaryCursor rgb:1B2529,rgb:E3E3E3+fg
+	face global PrimaryCursorEol rgb:1B2529,rgb:E3E3E3+fg
+    face global SecondaryCursor    rgb:1B2529,rgb:586e75+fg
+    face global SecondaryCursorEol    rgb:1B2529,rgb:586e75+fg
+    face global MatchingChar       rgb:45D4e8,rgb:586e75+b
+}
+hook global ModeChange .*:insert:.* %{
+    face global PrimaryCursor rgb:1B2529,rgb:00f76b+fg
+    face global PrimaryCursorEol rgb:1B2529,rgb:00f76b+fg
+    face global SecondaryCursor    rgb:1B2529,rgb:009640+fg
+    face global SecondaryCursorEol    rgb:1B2529,rgb:009640+fg
+    face global MatchingChar       rgb:45D4e8,rgb:009640+b
+}
+#autopairs
+source "%val{config}/auto-pairs.kak"
+#snippets
+# source "%val{config}/snippets.kak"
+# source "%val{config}/snippets-directory.kak"
+plug "occivink/kakoune-snippets" config %{
+    set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
+    hook global WinSetOption filetype=python %{
+        set-option global snippets_auto_expand false
+    }
+    map global insert <a-tab> ":snippets-select-next-placeholders<ret>"
+    # some other kakoune-snippets related configurations
+}
+# plug "andreyorst/kakoune-snippet-collection"
+# map global user <tab> ':snippets-expand-trigger<ret>' -docstring 'snippets expand'
+
+
+
+# eval %sh{kak-lsp --kakoune -s $kak_session}
+
+plug "kak-lsp/kak-lsp" do %{
+    cargo install --locked --force --path .
+    # optional: if you want to use specific language servers
+} config %{
+
+    # uncomment to enable debugging
+    eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+
+
+    set global lsp_diagnostic_line_error_sign '║'
+    set global lsp_diagnostic_line_warning_sign '┊'
+    set global lsp_hover_max_lines 40
+    define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
+    define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
+    define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
+
+    define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
+    hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran) %{
+        set-option window lsp_hover_anchor false
+        # lsp-auto-hover-enable
+        lsp-auto-signature-help-enable
+        echo -debug "Enabling LSP for filtetype %opt{filetype}"
+        map global normal <c-l> %{:enter-user-mode lsp<ret>} -docstring "LSP mode"
+        map global normal Q ':lsp-hover<ret>'
+        map global insert <a-tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt><tab> }<ret>' -docstring 'Select next snippet placeholder'
+        map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
+        map global object <a-a> '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
+        map global object e '<a-semicolon>lsp-object Function Method<ret>' -docstring 'LSP function or method'
+        map global object k '<a-semicolon>lsp-object Class Interface Struct<ret>' -docstring 'LSP class interface or struct'
+        map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
+        map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
+
+        map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: focus tools<ret>' -docstring 'search project symbols'
+        map global lsp r '<esc>: lsp-references<ret>: focus tools<ret>'              -docstring 'list symbol references'
+        map global lsp S '<esc>: lsp-document-symbol<ret>: focus tools<ret>'         -docstring 'list document symbols'
+        map global normal <c-k> '<esc>: lsp-selection-range<ret>'
+        map global lsp-selection-range <c-k> '<esc>: lsp-selection-range-select up<ret>'
+        lsp-enable-window
+    }
+    hook global WinSetOption filetype=(python) %{
+        # set-option global lsp_config %{
+        #         [language.python.settings._]
+        #  	"pyls.configurationSources" = ["flake8"]
+        # }
+        set-option window lsp_hover_anchor false
+        # lsp-auto-hover-enable
+        set-option global lsp_server_configuration pyls.plugins.pycodestyle.ignore=["E501","E128","E221"]
+        set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
+        echo -debug "Enabling LSP for filtetype %opt{filetype}"
+        map global user l ":enter-user-mode lsp<ret>"
+        map global normal <c-q> ":enter-user-mode lsp<ret>o"
+        lsp-enable-window
+    }
+
+    hook global WinSetOption filetype=(c|cpp) %{
+      hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+      hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+      hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+    add-highlighter shared/cpp/code/ regex (|~|`|!|\$|%|\^|&|\*|-|=|\+|\\|\||"|'|<|>|/) 0:symbol
+      hook -once -always window WinSetOption filetype=.* %{
+        remove-hooks window semantic-tokens
+      }
+    }
+
+    hook global KakEnd .* lsp-exit
+}
+# map global lsp n 'Z:lsp-goto-next-match <ret>'
+# map global lsp N 'Z:lsp-goto-previous-match <ret>'
+# lsp-enable
+
+# plug "andreyorst/kaktree" defer kaktree %{
+#     set-option global kaktree_double_click_duration '0.5'
+#     set-option global kaktree_indentation 1
+#     set-option global kaktree_dir_icon_open  '▾'
+#     set-option global kaktree_dir_icon_close '▸'
+#     set-option global kaktree_file_icon      '⠀ '
+#     } config %{
+#     hook global WinSetOption filetype=kaktree %{
+#         remove-highlighter buffer/numbers
+#         remove-highlighter buffer/matching
+#         remove-highlighter buffer/wrap
+#         remove-highlighter buffer/show-whitespaces
+#     }
+#     kaktree-enable
+# }
+
+# map global normal <F1> :kaktree-toggle<ret>
+# map global insert <F1> "<a-;>:kaktree-toggle<ret>"
+
+source "%val{config}/fortran.kak"
+
+hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
+    set-option buffer filetype fortran
+}
+
+hook global WinSetOption filetype=rust %{
+    snippets-directory-disable
+}
+
+
+def fide %{
+	rename-client main
+	vnew %{rename-client jump
+	                         set global jumpclient jump
+	                         hnew %{rename-client tools
+	                         set global toolsclient tools
+	                         nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}}}
+
+	focus main
+ 	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 20 \/ 100)}
+ 	set-option global makecmd "echo 'source /opt/intel/bin/compilervars.sh intel64 && make pw -j 28' | bash"
+	focus main
+	# hnew 
+	focus main
+	# rename-client julia-repl
+}
+
+set-option global autoreload yes
+
+plug "andreyorst/fzf.kak" config %{
+    map global normal <c-o> ': fzf-mode<ret>f'
+    map global normal <c-p> ': fzf-mode<ret>b'
+    map global normal <c-f> ': fzf-mode<ret>'
+    map global normal <c-u> ': fzf-mode<ret>p'
+} defer fzf-file %{
+    set-option global fzf_file_command "find . \( -path '*/.svn*' -o -path '*/.git*' -o -path '*/deps*' -o -path '*/assets/*' \) -prune -o -type f -print"
+    set-option global fzf_highlight_command 'bat'
+} defer fzf-grep %{
+    set-option global fzf_grep_command 'rg'
+} defer fzf-project %{
+}
+

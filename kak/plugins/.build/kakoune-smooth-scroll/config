@@ -1,0 +1,7 @@
+
+
+    hook global WinCreate [^*].* %{
+        hook -once window WinDisplay .* %{
+            smooth-scroll-enable
+        }
+    }

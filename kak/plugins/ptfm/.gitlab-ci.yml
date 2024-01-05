@@ -1,0 +1,25 @@
+image: python:alpine
+
+stages:
+  - lint
+  - tests
+
+unit_tests_37:
+  stage: tests
+  image: python:3.7-alpine
+  before_script:
+    - apk add make
+    - pip install -r requirements_dev.txt
+    - pip install -e .
+  script:
+    - make coverage
+
+unit_tests:
+  stage: tests
+  image: python:alpine
+  before_script:
+    - apk add make
+    - pip install -r requirements_dev.txt
+    - pip install -e .
+  script:
+    - make coverage

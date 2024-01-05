@@ -1,0 +1,24 @@
+try %{ 
+
+    set-option -add global snippets_directories "%opt{plug_install_dir}/kakoune-snippet-collection/snippets"
+    hook global WinSetOption filetype=python %{
+        set-option global snippets_auto_expand false
+    }
+    map global insert <a-tab> ":snippets-select-next-placeholders<ret>"
+    # some other kakoune-snippets related configurations
+ } catch %{
+    echo -debug "Error while evaluating 'kakoune-snippets' configuration: %val{error}"
+
+    set-option -add current plug_conf_errors "Error while evaluating 'kakoune-snippets' configuration:"
+    set-option -add current plug_conf_errors %sh{ printf "\n    " }
+    set-option -add current plug_conf_errors %val{error}
+    set-option -add current plug_conf_errors %sh{ printf "\n\n" }
+
+    hook -once -group plug-conf-err global WinDisplay .* %{
+        info -style modal -title "plug.kak error" "%opt{plug_conf_errors}"
+        on-key %{
+            info -style modal
+            execute-keys -with-maps -with-hooks %val{key}
+        }
+    }
+}

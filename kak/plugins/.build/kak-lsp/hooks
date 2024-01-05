@@ -1,0 +1,5 @@
+
+set -e
+
+    cargo install --locked --force --path .
+    # optional: if you want to use specific language servers

@@ -1,0 +1,14 @@
+fish_vi_key_bindings
+set -xg FZF_LEGACY_KEYBINDINGS 0
+fzf_key_bindings
+
+set -xg PATH /home/ponet/bin /home/ponet/.gem/ruby/2.5.0/bin/ $PATH
+set -xg EDITOR kak
+
+abbr -ag pushScripts 'rclone sync /home/ponet/Documents/PhD/JuliaScripts remote:JuliaScripts --backup-dir remote:JuliaScriptsArchive'
+abbr -ag pullScripts 'rclone sync remote:JuliaScripts /home/ponet/Documents/PhD/JuliaScripts --backup-dir /home/ponet/Documents/PhD/JuliaScriptsArchive'
+abbr -ag iitconnect  "startct --mode console --realm 'IIT Secure Remote Access' --username louis.ponet@iit.it --password Pietk0nijn8 --autologon  --domain sslvpn.iit.it"
+
+alias lsr 'ls $LS_OPTIONS -ltrF'
+alias tmuxls 'tmux list-sessions'
+set -xg TERM xterm-256color

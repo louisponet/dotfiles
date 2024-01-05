@@ -1,0 +1,3 @@
+[submodule "plugins/kfm-boring"]
+	path = plugins/kfm-boring
+	url = git@gitlab.com:lisael/kfm-boring.git

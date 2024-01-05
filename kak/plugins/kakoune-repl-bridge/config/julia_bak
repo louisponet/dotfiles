@@ -1,0 +1,9 @@
+Base.active_repl.interface.modes[1].prompt = "[PEXPECT_PROMPT> "
+Base.active_repl.interface.modes[1].prompt_prefix = ""
+'import REPL
+function REPL.display(d::REPL.REPLDisplay, mime::MIME"text/plain", x)
+    io = REPL.outstream(d.repl)
+    write(io, "[PEXPECT_PROMPT+ ")
+    show(IOContext(io, :limit => true), mime, x)
+    println(io)
+end'
