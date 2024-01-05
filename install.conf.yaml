@@ -15,6 +15,7 @@
             - pacman -S --noconfirm btop
             - pacman -S --noconfirm lazygit
             - pacman -S --noconfirm kitty
+            - pacman -S --noconfirm compton
     - cond: 'command -v apt'
       met:
         - shell:
@@ -24,6 +25,7 @@
           - apt -y install btop
           - apt -y install lazygit
           - apt -y install kitty
+          - apt -y install compton
   - shell:
       - chsh -s $(which fish)
 - rust:
