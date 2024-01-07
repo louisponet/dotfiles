@@ -45,7 +45,11 @@
 - create:
     - ~/Software
     - ~/bin
-
+- if:
+    cond: command -v cargo &> /dev/null
+    unmet:
+      - shell:
+          - [scripts/install, installing rust]
 - if:
     cond: command -v kak &> /dev/null
     unmet:
@@ -53,13 +57,11 @@
           '~/Software/kakoune':
             url: 'https://github.com/mawww/kakoune'
             branch: v2023.08.05
+          '~/Software/kak-lsp':
+            url: 'https://github.com/kak-lsp/kak-lsp'
       - shell:
           - [scripts/compile_kakoune, compile kakoune]
-- if:
-    cond: command -v cargo &> /dev/null
-    unmet:
-      - shell:
-          - [scripts/install, installing rust]
+      
 - if:
     cond: ls ~/.dotfiles_local/ &> /dev/null
     met:

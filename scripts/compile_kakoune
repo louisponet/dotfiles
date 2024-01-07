@@ -2,3 +2,6 @@
 cd ~/Software/kakoune
 make clean
 make -j8
+ln -s ~/Software/kakoune/src/kak ~/bin/kak 
+cd ~/Software/kak-lsp
+cargo install --locked --force --path .
