@@ -1,0 +1,12 @@
+#!/bin/bash 
+
+if ! command -v rustup &> /dev/null
+then 
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
+rustup component add clippy
+rustup component add rustfmt
+rustup component add rust-src
+rustup component add rust-analyzer
+rustup completions fish > ~/.config/fish/completions/rustup.fish
+cargo install cargo-update cargo-update bacon du-dust zoxide sccache mprocs rustfmt rustsym

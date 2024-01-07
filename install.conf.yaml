@@ -3,73 +3,7 @@
       create: true
       relink: true
 - clean: ['~']
-- sudo:
-  - if:
-    - cond: 'command -v pacman'
-      met:
-        - shell:
-            - [pacman -Syy, updating pacman]
-            - pacman -S --noconfirm fish
-            - pacman -S --noconfirm tmux
-            - pacman -S --noconfirm git
-            - pacman -S --noconfirm btop
-            - pacman -S --noconfirm lazygit
-            - pacman -S --noconfirm kitty
-            - pacman -S --noconfirm compton
-    - cond: 'command -v apt'
-      met:
-        - shell:
-          - apt -y install fish
-          - apt -y install tmux
-          - apt -y install git
-          - apt -y install btop
-          - apt -y install lazygit
-          - apt -y install kitty
-          - apt -y install compton
-  - shell:
-      - chsh -s $(which fish)
-- rust:
-  - stable:
-    - targets:
-      - x86_64-unknown-linux-gnu
-    - components:
-      - rust-analysis
-      - rls
-      - rust-src
-  - nightly:
-    - targets:
-      - x86_64-unknown-linux-gnu
-    - components:
-      - rust-analysis
-      - rls
-      - rust-src
-- if:
-    cond: 'command -v sccache'
-    unmet:
-      - cargo:
-        - cargo-update
-        - bacon
-        - du-dust
-        - zoxide
-        - sccache
-        - mprocs
-        - rustfmt
-        - rustsym
-- create:
-    - ~/Software
-    - ~/bin
-- if:
-    cond: ls ~/Software/kakoune
-    unmet:
-      - git:
-          '~/Software/kakoune':
-            url: 'https://github.com/mawww/kakoune'
-            branch: v2023.08.05
-      - shell:
-          - command: scripts/compile_kakoune
-            stdout: true
-            stderr: true
-          - ln -s ~/Software/kakoune/src/kak ~/bin
+
 - link:
     ~/.gitconfig: gitconfig
     ~/.tmux.conf: tmux/tmux.conf
@@ -82,10 +16,52 @@
     ~/.config/kitty: kitty
     ~/.config/kak-lsp: kak-lsp
     ~/.config/kak: kak
+    ~/.local/share/omf: omf
+
+- sudo:
+  - if:
+    - cond: 'command -v pacman'
+      met:
+        - shell:
+            - [pacman -Syy, updating pacman]
+            - pacman -S --noconfirm fish
+            - pacman -S --noconfirm tmux
+            - pacman -S --noconfirm git
+            - pacman -S --noconfirm btop
+            - pacman -S --noconfirm lazygit
+            - pacman -S --noconfirm kitty
+    - cond: 'command -v apt'
+      met:
+        - shell:
+          - apt -y install fish
+          - apt -y install tmux
+          - apt -y install git
+          - apt -y install btop
+          - apt -y install lazygit
+          - apt -y install kitty
+  - shell:
+      - chsh -s $(which fish)
+
+- create:
+    - ~/Software
+    - ~/bin
+
 - if:
-    cond: ls ~/.dotfiles_local/
+    cond: command -v kak &> /dev/null
+    unmet:
+      - git:
+          '~/Software/kakoune':
+            url: 'https://github.com/mawww/kakoune'
+            branch: v2023.08.05
+      - shell:
+          - [scripts/compile_kakoune, compile kakoune]
+- if:
+    cond: command -v cargo &> /dev/null
+    unmet:
+      - shell:
+          - [scripts/install, installing rust]
+- if:
+    cond: ls ~/.dotfiles_local/ &> /dev/null
     met:
       - shell:
-          - command: ~/.dotfiles_local/install
-            stdout: true
-            stderr: true
+          - [~/.dotfiles_local/install, installing local dotfiles]
