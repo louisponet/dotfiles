@@ -189,7 +189,7 @@ bindsym $mod+Return exec kitty
 bindsym $mod+q kill
 bindsym $mod+c exec bluetoothctl connect 88:C9:E8:68:57:A2
 bindsym Print exec screenshot
-bindsym $mod+d exec rofi -show run -theme ~/.config/rofi/onedark.rasi -font "Fira Code Retina 18"
+bindsym $mod+d exec rofi -show run -font "Fira Code Retina 18"
 
 exec --no-startup-id skype
 

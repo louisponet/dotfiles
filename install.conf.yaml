@@ -30,6 +30,7 @@
             - pacman -S --noconfirm btop
             - pacman -S --noconfirm lazygit
             - pacman -S --noconfirm kitty
+            - pacman -S --noconfirm rofi
     - cond: 'command -v apt'
       met:
         - shell:
@@ -39,8 +40,8 @@
           - apt -y install btop
           - apt -y install lazygit
           - apt -y install kitty
-  - shell:
-      - chsh -s $(which fish)
+- shell:
+  - chsh -s $(which fish)
 
 - create:
     - ~/Software
@@ -49,7 +50,7 @@
     cond: command -v cargo &> /dev/null
     unmet:
       - shell:
-          - [scripts/install, installing rust]
+          - [scripts/install_rust, installing rust]
 - if:
     cond: command -v kak &> /dev/null
     unmet:

@@ -28,4 +28,6 @@ set -xg QT_SCALE_FACTOR 1.5
 set -xg GDK_SCALE 2
 set -xg GDK_DPI_SCALE 0.5
 
-source $HOME/.config/fish/conf.d/local.fish
+if test -e $HOME/.config/fish/conf.d/local.fish
+	source $HOME/.config/fish/conf.d/local.fish
+end
