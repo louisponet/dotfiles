@@ -1,7 +1,6 @@
 try %{ 
 
     map global normal <c-o> ': fzf-mode<ret>f'
-    map global normal <c-p> ': fzf-mode<ret>b'
     map global normal <c-f> ': fzf-mode<ret>'
     map global normal <c-u> ': fzf-mode<ret>p'
  } catch %{
