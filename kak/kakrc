@@ -26,6 +26,11 @@ plug "andreyorst/smarttab.kak" defer smarttab %{
 source "%val{config}/expand.kak"
 source "%val{config}/sudo-write.kak"
 source "%val{config}/vertical-selection.kak"
+source "%val{config}/filetree.kak"
+source "%val{config}/buffer-switcher.kak"
+map global normal <c-p> ': filetree-switch-or-start -files-first -consider-gitignore<ret>'
+map global normal <c-d> ': buffer-switcher<ret>'
+
 plug "occivink/kakoune-phantom-selection"
 
 # gdb
@@ -52,13 +57,12 @@ source "%val{config}/find.kak"
 
 # General
 set-option global ui_options %{ "ncurses_enable_mouse" = "true"}
-# hook global ModeChange .*:insert:normal %{
-#     set-option global idle_timeout 750
-# }
-
-# hook global ModeChange .*:normal:insert %{
-#     set-option global idle_timeout 200
-# }
+hook global ModeChange .*:insert:normal %{
+    set-option global idle_timeout 750
+}
+hook global ModeChange .*:normal:insert %{
+    set-option global idle_timeout 500
+}
 
 def -hidden move-lines-down %{ exec -draft 'x<a-_><a-:>Z;ezjxdzP' }
 def -hidden move-lines-up %{ exec -draft 'x<a-_><a-:><a-;>Z;bzkxdzp' }
@@ -747,7 +751,6 @@ set-option global autoreload yes
 
 plug "andreyorst/fzf.kak" config %{
     map global normal <c-o> ': fzf-mode<ret>f'
-    map global normal <c-p> ': fzf-mode<ret>b'
     map global normal <c-f> ': fzf-mode<ret>'
     map global normal <c-u> ': fzf-mode<ret>p'
 } defer fzf-file %{
