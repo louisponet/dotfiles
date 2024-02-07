@@ -52,12 +52,13 @@ source "%val{config}/find.kak"
 
 # General
 set-option global ui_options %{ "ncurses_enable_mouse" = "true"}
-hook global ModeChange .*:insert:normal %{
-    set-option global idle_timeout 750
-}
-hook global ModeChange .*:normal:insert %{
-    set-option global idle_timeout 200
-}
+# hook global ModeChange .*:insert:normal %{
+#     set-option global idle_timeout 750
+# }
+
+# hook global ModeChange .*:normal:insert %{
+#     set-option global idle_timeout 200
+# }
 
 def -hidden move-lines-down %{ exec -draft 'x<a-_><a-:>Z;ezjxdzP' }
 def -hidden move-lines-up %{ exec -draft 'x<a-_><a-:><a-;>Z;bzkxdzp' }
@@ -553,19 +554,22 @@ alias global bo buffer-only
 alias global bo! buffer-only-force
 map global normal q ':enter-buffers-mode<ret>'
 map global buffers q ga -docstring 'alternate'
-def write-if-file %{
-	try %{
-		evaluate-commands %sh{
-			if [ -f "$kak_buffile" ];then
-				echo "write"
-			fi
-		}
-	}
-}
+
 #autosave
 def autosave-start %{
-	# hook global -group autosave ModeChange .*:insert:.* %{write-if-file}
-	hook global -group autosave NormalIdle .* %{write-if-file}
+	hook global -group autosave ModeChange .*:insert:.* %{
+    	try %{
+        	write
+    	}
+	}
+	hook global -group autosave NormalIdle .* %{
+    	try %{
+        	write
+    	}
+    }
+    hook global FocusOut .* %{ try %{
+        write
+} }
 }
 def autosave-stop %{
 	remove-hooks global autosave
@@ -634,8 +638,8 @@ plug "kak-lsp/kak-lsp" do %{
 } config %{
 
     # uncomment to enable debugging
-    eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-    set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+    # eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    # set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
 
     set global lsp_diagnostic_line_error_sign '║'
@@ -646,7 +650,7 @@ plug "kak-lsp/kak-lsp" do %{
     define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
 
     define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
-    hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran) %{
+    hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran|csharp) %{
         set-option window lsp_hover_anchor false
         # lsp-auto-hover-enable
         lsp-auto-signature-help-enable
@@ -692,6 +696,14 @@ plug "kak-lsp/kak-lsp" do %{
         remove-hooks window semantic-tokens
       }
     }
+    hook global WinSetOption filetype=csharp %{
+      hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+      hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+      hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+      hook -once -always window WinSetOption filetype=.* %{
+        remove-hooks window semantic-tokens
+      }
+    }
 
     hook global KakEnd .* lsp-exit
 }
@@ -699,29 +711,14 @@ plug "kak-lsp/kak-lsp" do %{
 # map global lsp N 'Z:lsp-goto-previous-match <ret>'
 # lsp-enable
 
-# plug "andreyorst/kaktree" defer kaktree %{
-#     set-option global kaktree_double_click_duration '0.5'
-#     set-option global kaktree_indentation 1
-#     set-option global kaktree_dir_icon_open  '▾'
-#     set-option global kaktree_dir_icon_close '▸'
-#     set-option global kaktree_file_icon      '⠀ '
-#     } config %{
-#     hook global WinSetOption filetype=kaktree %{
-#         remove-highlighter buffer/numbers
-#         remove-highlighter buffer/matching
-#         remove-highlighter buffer/wrap
-#         remove-highlighter buffer/show-whitespaces
-#     }
-#     kaktree-enable
-# }
-
-# map global normal <F1> :kaktree-toggle<ret>
-# map global insert <F1> "<a-;>:kaktree-toggle<ret>"
-
 source "%val{config}/fortran.kak"
 
 hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
     set-option buffer filetype fortran
+}
+
+hook global BufCreate .*\.cs %{
+    set-option buffer filetype csharp
 }
 
 hook global WinSetOption filetype=rust %{

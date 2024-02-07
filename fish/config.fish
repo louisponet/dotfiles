@@ -7,7 +7,7 @@ alias tmuxls 'tmux list-sessions'
 alias config '/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias please sudo
 
-set -xg PATH $HOME/.cargo/bin $HOME/.local/bin $PATH
+set -xg PATH $HOME/.cargo/bin $HOME/.local/bin $HOME/bin $PATH 
 
 ## INTEL
 set -xg LD_LIBRARY_PATH /opt/intel/compilers_and_libraries_2020.4.304/linux/compiler/lib/intel64_lin /opt/intel/compilers_and_libraries_2020.4.304/linux/mkl/lib/intel64_lin /home/ponet/Software/BTCS.Ipc/BTCS.Memory/c $LD_LIBRARY_PATH
@@ -24,10 +24,9 @@ set -xg RUST_BACKTRACE 1
 zoxide init fish | source
 set -xg RUSTC_WRAPPER sccache
 
-set -xg QT_SCALE_FACTOR 1.5
-set -xg GDK_SCALE 2
-set -xg GDK_DPI_SCALE 0.5
-
 if test -e $HOME/.config/fish/conf.d/local.fish
 	source $HOME/.config/fish/conf.d/local.fish
+end
+if test -e $HOME/.config/fish/conf.d/local1.fish
+	source $HOME/.config/fish/conf.d/local1.fish
 end

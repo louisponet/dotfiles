@@ -400,6 +400,12 @@ filetypes = ["fortran"]
 roots = ["make.inc"]
 command = "fortls"
 
+[language.csharp]
+filetypes = ["csharp"]
+roots = [".csproj"]
+command = "omnisharp"
+args = ["--languageserver"]
+
 # Semantic tokens support
 # See https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_semanticTokens
 # for the default list of tokens and modifiers.
