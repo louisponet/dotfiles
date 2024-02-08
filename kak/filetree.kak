@@ -9,7 +9,21 @@ declare-option -hidden bool filetree_highlight_dirty
 declare-option -hidden str filetree_root_directory
 declare-option -hidden range-specs filetree_open_files
 
-declare-option int filetree_indentation_level 3
+declare-option int filetree_indentation_level 2
+
+declare-option -docstring "name of the client that filetree will use to display itself." \
+str filetreeclient 'filetreeclient'
+
+declare-option -docstring "Choose how to split current pane to display filetree panel.
+    Possible values: vertical, horizontal
+    Default value: horizontal" \
+str filetree_split "horizontal"
+
+declare-option -docstring "Choose where to display filetree panel.
+    Possible values: left, right
+    Default value: left
+When filetree_split is set to 'horizontal', 'left' and 'right' will make split above or below current pane respectively." \
+str filetree_side "left"
 
 face global FileTreeOpenFiles black,yellow
 face global FileTreePipesColor rgb:606060,default

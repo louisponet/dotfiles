@@ -400,9 +400,9 @@ filetypes = ["fortran"]
 roots = ["make.inc"]
 command = "fortls"
 
-[language.csharp]
-filetypes = ["csharp"]
-roots = [".csproj"]
+[language.c-sharp]
+filetypes = ["c-sharp"]
+roots = [".git"]
 command = "omnisharp"
 args = ["--languageserver"]
 

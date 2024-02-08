@@ -9,4 +9,4 @@ rustup component add rustfmt
 rustup component add rust-src
 rustup component add rust-analyzer
 rustup completions fish > ~/.config/fish/completions/rustup.fish
-cargo install cargo-update cargo-update bacon du-dust zoxide sccache mprocs rustfmt rustsym
+cargo install cargo-update cargo-update bacon du-dust zoxide sccache mprocs rustfmt rustsym --locked

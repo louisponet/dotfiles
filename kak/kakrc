@@ -28,8 +28,10 @@ source "%val{config}/sudo-write.kak"
 source "%val{config}/vertical-selection.kak"
 source "%val{config}/filetree.kak"
 source "%val{config}/buffer-switcher.kak"
-map global normal <c-p> ': filetree-switch-or-start -files-first -consider-gitignore<ret>'
 map global normal <c-d> ': buffer-switcher<ret>'
+map global normal <F1> ':filetree-switch-or-start -dirs-first -consider-gitignore<ret>'
+
+# eval %sh{ kak-tree-sitter -dks --session $kak_session -vvvvv}
 
 plug "occivink/kakoune-phantom-selection"
 
@@ -108,7 +110,12 @@ map global normal <minus> r
 map global normal <_> R
 map global normal ';' ':'
 map global normal ':' ';'
-
+map global user h ': nop %sh{tmux select-pane -L}<ret>' -docstring 'tmux select left'
+map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
+map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
+map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
+map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
+map global user E ': kill' -docstring 'Exit ide'
 
 map global normal <c-m> ': make<ret>'
 # Keybindings to allow goto with shift (because i'm slow)
@@ -225,15 +232,22 @@ def tmux-reset-ide-c %{
     nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
     focus client0
 }
+def tmux-reset-ide-cs %{
+
+    focus jump
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
+    focus main
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+}
 
 def tmux-reset-ide-r %{
 
     focus jump
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
     focus main
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
-    focus main
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
 }
 
 def tmux-focus-julia %{
@@ -274,6 +288,7 @@ def jide %{
 	# rename-client julia-repl
 	focus client0
 }
+
 def cide %{
 	vnew %{rename-client jump
 	                         set global jumpclient jump
@@ -283,12 +298,6 @@ def cide %{
 	                         focus client0}}
 
 	focus client0
-    map global user h ': nop %sh{tmux select-pane -L}<ret>' -docstring 'tmux select left'
-    map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
-    map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
-    map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
-    map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
-    map global user E ': kill' -docstring 'Exit ide'
     map global user <space> ": tmux-reset-ide-c<ret>" -docstring 'reset ide windows'
     tmux-reset-ide-c
 	focus client0
@@ -296,35 +305,49 @@ def cide %{
 
 #rust
 hook global WinSetOption filetype=rust %{
-	set-option buffer makecmd 'cargo run'
+	set-option buffer makecmd 'cargo'
     set-option global gdb_program 'rust-gdb'
     hook global BufCreate .*bin/.*\.rs %{
         map buffer normal <C-F5> ': nop %sh{cargo build }<ret>: gdb-start'
     }
 }
 
+hook global WinSetOption filetype=c-sharp %{
+	set-option buffer makecmd 'dotnet'
+}
+
 def ride %{
     rename-client jump
     set global jumpclient jump
-    set global toolsclient jump
-	vnew %{rename-client main}
-	nop %sh{tmux split-window -h 'bacon'}
+    vnew %{rename-client main
+    }
+    focus jump
 
-    map global user h ': nop %sh{tmux select-pane -L}<ret>' -docstring 'tmux select left'
-    map global user l ': nop %sh{tmux select-pane -R}<ret>' -docstring 'tmux select right'
-    map global user k ': nop %sh{tmux select-pane -U}<ret>' -docstring 'tmux select up'
-    map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select down'
-    map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
-    map global user E ': kill' -docstring 'Exit ide'
-    map global user <space> ": tmux-reset-ide-r<ret>" -docstring 'reset ide windows'
-    tmux-reset-ide-r
-	focus main
+	hnew %{rename-client tools
+        set global toolsclient tools
+    }
+    map global user <space> ": tmux-reset-ide-cs<ret>" -docstring 'reset ide windows'
+    tmux-reset-ide-cs
+}
+
+def cside %{
+    rename-client jump
+    set global jumpclient jump
+    vnew %{rename-client main
+    }
+    focus jump
+
+	hnew %{rename-client tools
+        set global toolsclient tools
+    }
+    map global user <space> ": tmux-reset-ide-cs<ret>" -docstring 'reset ide windows'
+    tmux-reset-ide-cs
 }
 
 def jenv %{
 	julia-vertical -O3
 	focus client0
-}
+k}
 def rjide %{
 	hremote-julia
 	vnew edit -scratch j
@@ -632,89 +655,7 @@ plug "occivink/kakoune-snippets" config %{
 # plug "andreyorst/kakoune-snippet-collection"
 # map global user <tab> ':snippets-expand-trigger<ret>' -docstring 'snippets expand'
 
-
-
-# eval %sh{kak-lsp --kakoune -s $kak_session}
-
-plug "kak-lsp/kak-lsp" do %{
-    cargo install --locked --force --path .
-    # optional: if you want to use specific language servers
-} config %{
-
-    # uncomment to enable debugging
-    # eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-    # set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
-
-
-    set global lsp_diagnostic_line_error_sign '║'
-    set global lsp_diagnostic_line_warning_sign '┊'
-    set global lsp_hover_max_lines 40
-    define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
-    define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
-    define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
-
-    define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
-    hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran|csharp) %{
-        set-option window lsp_hover_anchor false
-        # lsp-auto-hover-enable
-        lsp-auto-signature-help-enable
-        echo -debug "Enabling LSP for filtetype %opt{filetype}"
-        map global normal <c-l> %{:enter-user-mode lsp<ret>} -docstring "LSP mode"
-        map global normal Q ':lsp-hover<ret>'
-        map global insert <a-tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt><tab> }<ret>' -docstring 'Select next snippet placeholder'
-        map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
-        map global object <a-a> '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
-        map global object e '<a-semicolon>lsp-object Function Method<ret>' -docstring 'LSP function or method'
-        map global object k '<a-semicolon>lsp-object Class Interface Struct<ret>' -docstring 'LSP class interface or struct'
-        map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
-        map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
-
-        map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: focus tools<ret>' -docstring 'search project symbols'
-        map global lsp r '<esc>: lsp-references<ret>: focus tools<ret>'              -docstring 'list symbol references'
-        map global lsp S '<esc>: lsp-document-symbol<ret>: focus tools<ret>'         -docstring 'list document symbols'
-        map global normal <c-k> '<esc>: lsp-selection-range<ret>'
-        map global lsp-selection-range <c-k> '<esc>: lsp-selection-range-select up<ret>'
-        lsp-enable-window
-    }
-    hook global WinSetOption filetype=(python) %{
-        # set-option global lsp_config %{
-        #         [language.python.settings._]
-        #  	"pyls.configurationSources" = ["flake8"]
-        # }
-        set-option window lsp_hover_anchor false
-        # lsp-auto-hover-enable
-        set-option global lsp_server_configuration pyls.plugins.pycodestyle.ignore=["E501","E128","E221"]
-        set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
-        echo -debug "Enabling LSP for filtetype %opt{filetype}"
-        map global user l ":enter-user-mode lsp<ret>"
-        map global normal <c-q> ":enter-user-mode lsp<ret>o"
-        lsp-enable-window
-    }
-
-    hook global WinSetOption filetype=(c|cpp) %{
-      hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
-      hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
-      hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
-    add-highlighter shared/cpp/code/ regex (|~|`|!|\$|%|\^|&|\*|-|=|\+|\\|\||"|'|<|>|/) 0:symbol
-      hook -once -always window WinSetOption filetype=.* %{
-        remove-hooks window semantic-tokens
-      }
-    }
-    hook global WinSetOption filetype=csharp %{
-      hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
-      hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
-      hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
-      hook -once -always window WinSetOption filetype=.* %{
-        remove-hooks window semantic-tokens
-      }
-    }
-
-    hook global KakEnd .* lsp-exit
-}
-# map global lsp n 'Z:lsp-goto-next-match <ret>'
-# map global lsp N 'Z:lsp-goto-previous-match <ret>'
-# lsp-enable
-
+source "%val{config}/lsp.kak"
 source "%val{config}/fortran.kak"
 
 hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
@@ -722,13 +663,12 @@ hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
 }
 
 hook global BufCreate .*\.cs %{
-    set-option buffer filetype csharp
+    set-option buffer filetype c-sharp
 }
 
 hook global WinSetOption filetype=rust %{
     snippets-directory-disable
 }
-
 
 def fide %{
 	rename-client main
@@ -750,11 +690,13 @@ def fide %{
 set-option global autoreload yes
 
 plug "andreyorst/fzf.kak" config %{
-    map global normal <c-o> ': fzf-mode<ret>f'
-    map global normal <c-f> ': fzf-mode<ret>'
+    map global normal <c-F> ': fzf-mode<ret>'
+    map global normal <c-p> ': fzf-mode<ret>b'
     map global normal <c-u> ': fzf-mode<ret>p'
+    map global normal <c-f> ': fzf-mode<ret>g'
+    map global normal <c-o> ': fzf-mode<ret>f'
 } defer fzf-file %{
-    set-option global fzf_file_command "find . \( -path '*/.svn*' -o -path '*/.git*' -o -path '*/deps*' -o -path '*/assets/*' \) -prune -o -type f -print"
+    set-option global fzf_file_command "fd" #ind . \( -path '*/.svn*' -o -path '*/.git*' -o -path '*/deps*' -o -path '*/assets/*' \) -prune -o -type f -print"
     set-option global fzf_highlight_command 'bat'
 } defer fzf-grep %{
     set-option global fzf_grep_command 'rg'

@@ -1,1 +1,3 @@
 kak/plugins/.build/kak-lsp
+kak/plugins/.build/fzf.kak
+plugins/__pycache__
