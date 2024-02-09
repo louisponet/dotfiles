@@ -169,6 +169,11 @@ roots = ["package.json"]
 command = "vscode-json-languageserver"
 args = ["--stdio"]
 
+# [language.cucumber]
+# filetypes = ["cucumber"]
+# roots = [".git"]
+# command = "/home/lopo/bin/test_cucumber.sh"
+
 # Requires Julia package "LanguageServer"
 # Run: `julia --project=@kak-lsp -e 'import Pkg; Pkg.add("LanguageServer")'` to install it
 # Configuration adapted from https://github.com/neovim/nvim-lspconfig/blob/bcebfac7429cd8234960197dca8de1767f3ef5d3/lua/lspconfig/julials.lua

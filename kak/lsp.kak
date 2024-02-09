@@ -1,8 +1,8 @@
 eval %sh{kak-lsp --kakoune -s $kak_session}
 
 # uncomment to enable debugging
-# eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-# set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
 # 
 set global lsp_diagnostic_line_error_sign '║'
@@ -14,7 +14,7 @@ define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-
 
 define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
-hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran|c-sharp) %{
+hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran|c-sharp|cucumber) %{
     set-option window lsp_hover_anchor false
     # lsp-auto-hover-enable
     lsp-auto-signature-help-enable

@@ -12,7 +12,7 @@ plug "andreyorst/smarttab.kak" defer smarttab %{
 	set-option global softtabstop 4 # or other preferred value
 } config %{
     # these languages will use `expandtab' behavior
-    hook global WinSetOption filetype=(rust|markdown|kak|lisp|scheme|sh|perl|julia|python) expandtab
+    hook global WinSetOption filetype=(c-sharp|rust|markdown|kak|lisp|scheme|sh|perl|julia|python) expandtab
     hook global WinSetOption filetype=yaml %{
         expandtab
         set-option buffer indentwidth 2
@@ -235,10 +235,10 @@ def tmux-reset-ide-c %{
 def tmux-reset-ide-cs %{
 
     focus jump
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 40 \/ 100)}
     nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
     focus main
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
+    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 60 \/ 100)}
 }
 
 def tmux-reset-ide-r %{
@@ -314,34 +314,37 @@ hook global WinSetOption filetype=rust %{
 
 hook global WinSetOption filetype=c-sharp %{
 	set-option buffer makecmd 'dotnet'
+	set-option buffer indentwidth 4
 }
 
 def ride %{
-    rename-client jump
-    set global jumpclient jump
-    vnew %{rename-client main
-    }
-    focus jump
-
-	hnew %{rename-client tools
-        set global toolsclient tools
+    rename-client main
+    vnew %{
+        rename-client jump
+        set global jumpclient jump
+    	hnew %{
+        	rename-client tools
+            set global toolsclient tools
+            focus main
+            tmux-reset-ide-cs
+    	}
     }
     map global user <space> ": tmux-reset-ide-cs<ret>" -docstring 'reset ide windows'
-    tmux-reset-ide-cs
 }
 
 def cside %{
-    rename-client jump
-    set global jumpclient jump
-    vnew %{rename-client main
-    }
-    focus jump
-
-	hnew %{rename-client tools
-        set global toolsclient tools
+    rename-client main
+    vnew %{
+        rename-client jump
+        set global jumpclient jump
+    	hnew %{
+        	rename-client tools
+            set global toolsclient tools
+            focus main
+            tmux-reset-ide-cs
+    	}
     }
     map global user <space> ": tmux-reset-ide-cs<ret>" -docstring 'reset ide windows'
-    tmux-reset-ide-cs
 }
 
 def jenv %{
@@ -466,24 +469,24 @@ set -add global ui_options terminal_set_title=no
 
 set global scrolloff 2,5
 
-# preserve indent level
-# hook global InsertChar \n %{ try %{ exec -itersel -draft ';K<a-&>' } }
+#preserve indent level
+hook global InsertChar \n %{ try %{ exec -itersel -draft ';K<a-&>' } }
 
-# def -hidden backspace-with-indentwidth %{
-#     eval -itersel %{
-#         try %{
-#             # will only succeed at the beginning of the buffer -> nothing to do
-#             exec -draft ';H<a-k>\A.\z<ret>'
-#         } catch %{
-#             # if there is nothing but horizontal whitespace between character to the left and beginning of line,
-#             # delete in increments of indentwidth
-#             exec -draft "hGh<a-k>\A[ \t]+\z<ret>s(\t| {1,%opt{indentwidth}})<ret>,d"
-#         } catch %{
-#             # regular case, delete previous character
-#             exec -draft 'hd'
-#         }
-#     }
-# }
+def -hidden backspace-with-indentwidth %{
+    eval -itersel %{
+        try %{
+            # will only succeed at the beginning of the buffer -> nothing to do
+            exec -draft ';H<a-k>\A.\z<ret>'
+        } catch %{
+            # if there is nothing but horizontal whitespace between character to the left and beginning of line,
+            # delete in increments of indentwidth
+            exec -draft "hGh<a-k>\A[ \t]+\z<ret>s(\t| {1,%opt{indentwidth}})<ret>,dl"
+        } catch %{
+            # regular case, delete previous character
+            exec -draft 'hd'
+        }
+    }
+}
 # map global insert <backspace> '<a-;>: backspace-with-indentwidth<ret>'
 # map global insert <s-backspace> '<a-;>: backspace-with-indentwidth<ret>'
 
@@ -664,6 +667,10 @@ hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
 
 hook global BufCreate .*\.cs %{
     set-option buffer filetype c-sharp
+    set-option buffer comment_line //
+    set-option buffer comment_block_begin /*
+    set-option buffer comment_block_end */
+    set-option buffer indentwidth 4
 }
 
 hook global WinSetOption filetype=rust %{
