@@ -72,3 +72,10 @@
     met:
       - shell:
           - [~/.dotfiles_local/install, installing local dotfiles]
+- if:
+    cond: ls ~/.config/kak/plugins/kak-ansi/ &> /dev/null
+    unmet:
+      - git:
+          '~/.config/kak/plugins/kak-ansi':
+            url: 'https://github.com/eraserhd/kak-ansi'
+            branch: v0.2.5
