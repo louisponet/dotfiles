@@ -1,3 +1,5 @@
 kak/plugins/.build/kak-lsp
 kak/plugins/.build/fzf.kak
 plugins/__pycache__
+kak/plugins/kak-ansi
+kak/plugins/.build/smarttab.kak

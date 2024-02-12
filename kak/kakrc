@@ -28,13 +28,13 @@ source "%val{config}/sudo-write.kak"
 source "%val{config}/vertical-selection.kak"
 source "%val{config}/filetree.kak"
 source "%val{config}/buffer-switcher.kak"
+source "%val{config}/plugins/kak-ansi/rc/ansi.kak"
+hook global BufOpenFifo \*make\* %{
+    ansi-enable
+}
 map global normal <c-d> ': buffer-switcher<ret>'
 map global normal <F1> ':filetree-switch-or-start -dirs-first -consider-gitignore<ret>'
-
 # eval %sh{ kak-tree-sitter -dks --session $kak_session -vvvvv}
-
-plug "occivink/kakoune-phantom-selection"
-
 # gdb
 source "%val{config}/gdb.kak"
 gdb-enable-autojump
@@ -70,17 +70,11 @@ def -hidden move-lines-down %{ exec -draft 'x<a-_><a-:>Z;ezjxdzP' }
 def -hidden move-lines-up %{ exec -draft 'x<a-_><a-:><a-;>Z;bzkxdzp' }
 
 map global normal <a-q> ': expand<ret>'
-map global normal f     ": phantom-selection-add-selection<ret>"
-map global normal F     ": phantom-selection-select-all; phantom-selection-clear<ret>"
-map global normal <a-f> ": phantom-selection-iterate-next<ret>"
-map global normal <a-F> ": phantom-selection-iterate-prev<ret>"
 # this would be nice, but currrently doesn't work
 # see https://github.com/mawww/kakoune/issues/1916
 #map global insert <a-f> "<a-;>: phantom-sel-iterate-next<ret>"
 #map global insert <a-F> "<a-;>: phantom-sel-iterate-prev<ret>"
 # so instead, have an approximate version that uses 'i'
-map global insert <a-f> "<esc>: phantom-sel-iterate-next<ret>i"
-map global insert <a-F> "<esc>: phantom-sel-iterate-prev<ret>i"
 map global normal w     <a-i>w
 map global normal <a-w> <a-i><a-w>
 map global normal W     '"_s.<ret><a-i>w'
@@ -584,6 +578,8 @@ alias global bo buffer-only
 alias global bo! buffer-only-force
 map global normal q ':enter-buffers-mode<ret>'
 map global buffers q ga -docstring 'alternate'
+map global normal F ': eval -client main %{buffer %opt{current_bufname}}<ret>qq: focus main<ret>'
+map global normal f ': eval -client jump %{buffer %opt{current_bufname}}<ret>qq'
 
 #autosave
 def autosave-start %{
