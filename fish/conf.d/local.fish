@@ -1,1 +1,1 @@
-/home/ponet/.dotfiles_local/fish/local.fish
+set -xg ASPNETCORE_ENVIRONMENT Development
