@@ -578,8 +578,8 @@ alias global bo buffer-only
 alias global bo! buffer-only-force
 map global normal q ':enter-buffers-mode<ret>'
 map global buffers q ga -docstring 'alternate'
-map global normal F ': eval -client main %{buffer %opt{current_bufname}}<ret>qq: focus main<ret>'
-map global normal f ': eval -client jump %{buffer %opt{current_bufname}}<ret>qq'
+map global normal F ': eval -client main %{buffer %opt{current_bufname}}<ret>ga: focus main<ret>'
+map global normal f ': eval -client jump %{buffer %opt{current_bufname}}<ret>ga'
 
 #autosave
 def autosave-start %{
