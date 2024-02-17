@@ -4,3 +4,5 @@
 [credential]
 	credentialStore = gpg
 	helper = store
+[pull]
+	rebase = false

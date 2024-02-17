@@ -29,6 +29,7 @@ hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|for
     map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
     map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
+
     map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: focus tools<ret>' -docstring 'search project symbols'
     map global lsp i '<esc>: lsp-implementation<ret>: focus tools<ret>' -docstring 'go to implementation'
     map global lsp r '<esc>: lsp-references<ret>: focus tools<ret>'              -docstring 'list symbol references'

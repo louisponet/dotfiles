@@ -34,6 +34,10 @@ hook global BufOpenFifo \*make\* %{
 }
 map global normal <c-d> ': buffer-switcher<ret>'
 map global normal <F1> ':filetree-switch-or-start -dirs-first -consider-gitignore<ret>'
+
+# align columns
+map global normal = 's\s[^\s]<ret>&,'
+map global normal + 's=<ret>&,'
 # eval %sh{ kak-tree-sitter -dks --session $kak_session -vvvvv}
 # gdb
 source "%val{config}/gdb.kak"
@@ -661,6 +665,9 @@ hook global BufCreate .*\.(f90|f95|f03|f08|F90) %{
     set-option buffer filetype fortran
 }
 
+hook global BufCreate .*\.razor %{
+    set-option buffer filetype c-sharp
+}
 hook global BufCreate .*\.cs %{
     set-option buffer filetype c-sharp
     set-option buffer comment_line //
