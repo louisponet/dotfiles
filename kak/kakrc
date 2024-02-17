@@ -23,43 +23,51 @@ plug "andreyorst/smarttab.kak" defer smarttab %{
     hook global WinSetOption filetype=(c|cpp) smarttab
 }
 
+source "%val{config}/find.kak"
 source "%val{config}/expand.kak"
 source "%val{config}/sudo-write.kak"
 source "%val{config}/vertical-selection.kak"
 source "%val{config}/filetree.kak"
 source "%val{config}/buffer-switcher.kak"
 source "%val{config}/plugins/kak-ansi/rc/ansi.kak"
+# ide layouts
+source "%val{config}/ide.kak"
+# gdb
+source "%val{config}/gdb.kak"
+hook global GlobalSetOption gdb_session_started=true %{
+    map global normal <F1>    ': gdb-print<ret>'
+    map global normal <F5>    ': gdb-session-stop<ret>'
+    map global normal <F6>    ': gdb-toggle-breakpoint<ret>'
+    map global normal <F7>    ': gdb-toggle-execution<ret>'
+    map global normal <F8>    ': gdb-next<ret>'
+    map global normal <F9>    ': gdb-step<ret>'
+    map global normal <F10>   ': gdb-finish<ret>'
+}
+hook global GlobalSetOption gdb_session_started=false %{
+    unmap global normal <F1>    
+    unmap global normal <F5>    
+    unmap global normal <F6>    
+    unmap global normal <F7>    
+    unmap global normal <F8>    
+    unmap global normal <F9>    
+    unmap global normal <F10>   
+    execute-keys '<space><space>'
+}
+set-option global modelinefmt '%val{bufname} %val{cursor_line}:%val{cursor_char_column} {{context_info}} {{mode_info}} {red,default}%opt{gdb_indicator}{default,default}- F1 p, F6 bp, F7 c, F8 n, F9 s, F10 f - %val{client}@[%val{session}]'
+
+
+source "%val{config}/rust.kak"
+
 hook global BufOpenFifo \*make\* %{
     ansi-enable
 }
 map global normal <c-d> ': buffer-switcher<ret>'
-map global normal <F1> ':filetree-switch-or-start -dirs-first -consider-gitignore<ret>'
+# map global normal <F1> ':filetree-switch-or-start -dirs-first -consider-gitignore<ret>'
 
 # align columns
 map global normal = 's\s[^\s]<ret>&,'
 map global normal + 's=<ret>&,'
 # eval %sh{ kak-tree-sitter -dks --session $kak_session -vvvvv}
-# gdb
-source "%val{config}/gdb.kak"
-gdb-enable-autojump
-hook global GlobalSetOption gdb_session_started=true %{
-    map global normal <F10>   ': gdb-next<ret>'
-    map global normal <F11>   ': gdb-step<ret>'
-    map global normal <s-F11> ': gdb-finish<ret>'
-    map global normal <F9>    ': gdb-toggle-breakpoint<ret>'
-    map global normal <F5>    ': gdb-continue<ret>'
-}
-hook global GlobalSetOption gdb_session_started=false %{
-    unmap global normal <F10>   ': gdb-next<ret>'
-    unmap global normal <F11>   ': gdb-step<ret>'
-    unmap global normal <s-F11> ': gdb-finish<ret>'
-    unmap global normal <F9>    ': gdb-toggle-breakpoint<ret>'
-    unmap global normal <F5>    ': gdb-continue<ret>'
-}
-set-option global modelinefmt '%val{bufname} %val{cursor_line}:%val{cursor_char_column} {{context_info}} {{mode_info}} {red,default}%opt{gdb_indicator}{default,default}- %val{client}@[%val{session}]'
-
-#finding
-source "%val{config}/find.kak"
 
 # General
 set-option global ui_options %{ "ncurses_enable_mouse" = "true"}
@@ -91,7 +99,12 @@ map global normal <a-e> <a-f>
 map global normal <backspace> <,>
 # map global normal <space> <,>
 map global user f ':prompt "grep in files:" %{find %val{text}}<ret>'
-map global user X x
+# alias
+def x %{
+    write-all
+    kill
+}
+map global user x x
 map global normal <s-tab> '<c-o>'
 map global normal D ';xd'
 map global normal Y ';xy'
@@ -152,8 +165,6 @@ hook global InsertIdle '' update-curword
 def align -params 1 -docstring 'align selection' %{
 	execute-keys "s%arg{1}<ret>&"
 }
-# alias
-alias global x write-quit
 # softw wrap
 addhl global/ wrap
 addhl global/linehighlight line '%val{cursor_line}' cursorline
@@ -206,64 +217,6 @@ def hremote-julia %{
  	nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
 }
 
-def tmux-reset-ide-julia %{
-    focus tools
-    # nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
-
-    focus jump
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
-    focus client0
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
-}
-
-def tmux-reset-ide-c %{
-
-    focus client0
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
-    focus jump
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
-    focus tools
-    # nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 33 \/ 100)}
-    focus client0
-}
-def tmux-reset-ide-cs %{
-
-    focus jump
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 40 \/ 100)}
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    focus main
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 60 \/ 100)}
-}
-
-def tmux-reset-ide-r %{
-
-    focus jump
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    focus main
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 50 \/ 100)}
-}
-
-def tmux-focus-julia %{
-    focus client0
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 10 \/ 100)}
-    nop %sh{tmux select-pane -D}
-}
-def tmux-focus-tools %{
-    focus tools
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 80 \/ 100)}
-}
-def tmux-focus-hover %{
-    focus lsp
-    nop %sh{tmux resize-pane -y $(expr $(tmux display -p '#{window_height}') \* 80 \/ 100)}
-    nop %sh{tmux resize-pane -x $(expr $(tmux display -p '#{window_width}') \* 80 \/ 100)}
-}
-
 def jide %{
 	vnew %{rename-client jump
 	                         set global jumpclient jump
@@ -301,33 +254,9 @@ def cide %{
 	focus client0
 }
 
-#rust
-hook global WinSetOption filetype=rust %{
-	set-option buffer makecmd 'cargo'
-    set-option global gdb_program 'rust-gdb'
-    hook global BufCreate .*bin/.*\.rs %{
-        map buffer normal <C-F5> ': nop %sh{cargo build }<ret>: gdb-start'
-    }
-}
-
 hook global WinSetOption filetype=c-sharp %{
 	set-option buffer makecmd 'dotnet'
 	set-option buffer indentwidth 4
-}
-
-def ride %{
-    rename-client main
-    vnew %{
-        rename-client jump
-        set global jumpclient jump
-    	hnew %{
-        	rename-client tools
-            set global toolsclient tools
-            focus main
-            tmux-reset-ide-cs
-    	}
-    }
-    map global user <space> ": tmux-reset-ide-cs<ret>" -docstring 'reset ide windows'
 }
 
 def cside %{

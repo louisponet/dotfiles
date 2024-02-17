@@ -76,6 +76,7 @@ The arguments are passed to gdb. In particular, the first argument is the progra
     }
     try %{
         terminal %opt{gdb_program} --init-eval-command "set mi-async on" --init-eval-command "new-ui mi3 %opt{gdb_dir}/pty" %arg{@}
+        focus %val{client}
     } catch %{
         gdb-session-stop-receiver
         fail 'The ''terminal'' command must be defined to start a gdb session'
