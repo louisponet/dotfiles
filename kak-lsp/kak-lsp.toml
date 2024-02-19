@@ -407,7 +407,7 @@ command = "fortls"
 
 [language.c-sharp]
 filetypes = ["c-sharp"]
-roots = [".git"]
+roots = ["Trading.sln"]
 command = "omnisharp"
 args = ["--languageserver"]
 

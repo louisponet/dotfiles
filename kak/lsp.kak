@@ -14,6 +14,8 @@ define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-
 
 define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
+decl -hidden str next_location_buffer "*symbols*"
+
 hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|fortran|c-sharp|cucumber) %{
     set-option window lsp_hover_anchor false
     # lsp-auto-hover-enable
@@ -30,10 +32,14 @@ hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|for
     map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
 
-    map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: focus tools<ret>' -docstring 'search project symbols'
-    map global lsp i '<esc>: lsp-implementation<ret>: focus tools<ret>' -docstring 'go to implementation'
-    map global lsp r '<esc>: lsp-references<ret>: focus tools<ret>'              -docstring 'list symbol references'
-    map global lsp S '<esc>: lsp-document-symbol<ret>: focus tools<ret>'         -docstring 'list document symbols'
+    map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: set-option global next_location_buffer *symbols*<ret>' -docstring 'search project symbols'
+    map global lsp i '<esc>: lsp-implementation<ret>: set-option global next_location_buffer *goto*<ret>' -docstring 'go to implementation'
+    map global lsp r '<esc>: lsp-references<ret>: set-option global next_location_buffer *goto*<ret>' -docstring 'list symbol references'
+    map global lsp S '<esc>: lsp-document-symbol<ret>: set-option global next_location_buffer *symbols*<ret>' -docstring 'list document symbols'
+    map global lsp e '<esc>: lsp-find-error<ret>' -docstring 'find next error'
+    map global lsp E '<esc>: lsp-find-error --previous<ret>' -docstring 'find previous error'
+    map global lsp n '<esc>: lsp-next-location %opt{next_location_buffer}<ret>' -docstring 'next location'
+    map global lsp N '<esc>: lsp-previous-location %opt{next_location_buffer}<ret>' -docstring 'next location'
     map global normal <c-k> '<esc>: lsp-selection-range<ret>'
     map global lsp-selection-range <c-k> '<esc>: lsp-selection-range-select up<ret>'
     lsp-enable-window

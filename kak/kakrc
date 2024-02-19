@@ -257,6 +257,7 @@ def cide %{
 hook global WinSetOption filetype=c-sharp %{
 	set-option buffer makecmd 'dotnet'
 	set-option buffer indentwidth 4
+	autosave-stop
 }
 
 def cside %{
