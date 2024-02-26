@@ -216,6 +216,6 @@ bindsym --release Shift+Print exec "scrot ~/Pictures/Screenshots/$(date --iso-86
 
 # Brightness
 bindsym $mod+F1 exec $HOME/bin/dimmer.sh 1
-bindsym $mod+F2 exec $HOME/bin/dimmer.sh 0.7 n
-bindsym $mod+F3 exec $HOME/bin/dimmer.sh 0.4 n
+bindsym $mod+F2 exec $HOME/bin/dimmer.sh 0.7 
+bindsym $mod+F3 exec $HOME/bin/dimmer.sh 0.4 
 bindsym $mod+F4 exec sleep 1 && xset -display $DISPLAY dpms force off; read temp; xset -display $DISPLAY dpms force on

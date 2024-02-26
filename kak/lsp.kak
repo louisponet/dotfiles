@@ -1,8 +1,8 @@
 eval %sh{kak-lsp --kakoune -s $kak_session}
 
 # uncomment to enable debugging
-eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+#eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+#set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
 # 
 set global lsp_diagnostic_line_error_sign '║'
@@ -32,7 +32,7 @@ hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|for
     map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
 
-    map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: set-option global next_location_buffer *symbols*<ret>' -docstring 'search project symbols'
+    map global lsp o '<esc>: lsp-workspace-symbol-incr<ret>: set-option global next_location_buffer *symbols*<ret>: focus tools<ret>' -docstring 'search project symbols'
     map global lsp i '<esc>: lsp-implementation<ret>: set-option global next_location_buffer *goto*<ret>' -docstring 'go to implementation'
     map global lsp r '<esc>: lsp-references<ret>: set-option global next_location_buffer *goto*<ret>' -docstring 'list symbol references'
     map global lsp S '<esc>: lsp-document-symbol<ret>: set-option global next_location_buffer *symbols*<ret>' -docstring 'list document symbols'

@@ -3,7 +3,7 @@
 # JuliaSyntax.enable_in_core!()
 using Pkg: Pkg
 Pkg.UPDATED_REGISTRY_THIS_SESSION[] = true
-using AbbreviatedStackTraces
+# using AbbreviatedStackTraces
 
 # use more colors for displaying Pkg conflicts
 if isdefined(Pkg.Resolve, :CONFLICT_COLORS)
