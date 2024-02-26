@@ -11,9 +11,29 @@ def rs-start-gdb %{
 }
 
 hook global WinSetOption filetype=rust %{
-    set-option buffer makecmd 'cargo'
+    set-option global makecmd 'export RUST_LOG_STYLE=always && export RUST_LOG=DEBUG && export CARGO_TERM_COLOR=always && cargo'
+    set-option global make_error_pattern "error(?:\[E\d+\])?: (?:[^\n]+)?\n\s+-->\s+([^:\n]+):(\d+):(\d+)"
+    declare-option regex make_error_line_pattern "\s+-->\s+([^:\n]+):(\d+):(\d+)"
     set-option global gdb_program 'rust-gdb'
     map buffer normal <C-F5> ': rs-start-gdb<ret>'
+
+
+    define-command -hidden -override make-jump %{
+        evaluate-commands -save-regs / %{
+            try %{
+                execute-keys gl<a-?> "Entering directory" <ret><a-:>
+                # Try to parse the error into capture groups, failing on absolute paths
+                execute-keys s "Entering directory [`']([^']+)'.*\n([^:/][^:]*):(\d+):(?:(\d+):)?([^\n]+)\z" <ret>l
+                set-option buffer make_current_error_line %val{cursor_line}
+                make-open-error "%reg{1}/%reg{2}" "%reg{3}" "%reg{4}" "%reg{5}"
+            } catch %{
+                set-register / %opt{make_error_line_pattern}
+                execute-keys <a-h><a-l> s<ret>l
+                set-option buffer make_current_error_line %val{cursor_line}
+                make-open-error "%reg{1}" "%reg{2}" "%reg{3}" "%reg{4}"
+            }
+        }
+    }
 }
 
 def ride %{
