@@ -643,4 +643,3 @@ plug "andreyorst/fzf.kak" config %{
     set-option global fzf_grep_command 'rg'
 } defer fzf-project %{
 }
-

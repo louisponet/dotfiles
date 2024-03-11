@@ -23,6 +23,7 @@ set -xg RUST_BACKTRACE 1
 # starship init fish | source
 zoxide init fish | source
 set -xg RUSTC_WRAPPER sccache
+set -xg RUST_LOG Info
 
 if test -e $HOME/.config/fish/conf.d/local.fish
 	source $HOME/.config/fish/conf.d/local.fish
@@ -32,3 +33,4 @@ if test -e $HOME/.config/fish/conf.d/local1.fish
 end
 
 set hook $(printf "{\"hook\": \"SSH\", \"value\": {\"socket_path\": \"~/.ssh/23581\", \"remote_shell\": \"%s\"}}" "$SHELL##*/" | command od -An -v -tx1 | command tr -d " \n")
+
