@@ -76,7 +76,7 @@ declare-option -docstring 'use tmux popup instead of split pane
 Default value:
     false
 ' \
-bool fzf_tmux_popup false
+bool fzf_tmux_popup true
 
 declare-option -docstring "mapping to execute action in new window" \
 str fzf_window_map 'ctrl-w'
