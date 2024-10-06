@@ -23,6 +23,6 @@ disk "/" {
 	threshold_type = "gbytes_avail"
 }
 cpu_usage {
-    format = "%cpu0 ∆ %cpu1 ∆ %cpu2 ∆ %cpu3 ∆ %cpu4 ∆ %cpu5 ∆ %cpu6 ∆ %cpu7"
+    format = "%cpu0 ∆ %cpu1 ∆ %cpu2 ∆ %cpu3 ∆ %cpu4 ∆ %cpu5 ∆ %cpu6 ∆ %cpu7 ∆ %cpu8 ∆ %cpu9 ∆ %cpu10 ∆ %cpu11 ∆ %cpu12 ∆ %cpu13 ∆ %cpu14 ∆ %cpu15"
 }
 

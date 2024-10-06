@@ -1,10 +1,7 @@
 eval %sh{kak-lsp --kakoune -s $kak_session}
+# eval %sh{kak-lsp --kakoune -s $kak_session -vvv --log /tmp/kak-lsp.log}
 
-# uncomment to enable debugging
-#eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-#set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
-# 
 set global lsp_diagnostic_line_error_sign '║'
 set global lsp_diagnostic_line_warning_sign '┊'
 set global lsp_hover_max_lines 40
@@ -43,6 +40,13 @@ hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|for
     map global normal <c-k> '<esc>: lsp-selection-range<ret>'
     map global lsp-selection-range <c-k> '<esc>: lsp-selection-range-select up<ret>'
     lsp-enable-window
+}
+
+hook global WinSetOption filetype=rust %{
+    hook window -group rust-inlay-hints BufWritePost .* rust-analyzer-inlay-hints
+    hook -once -always window WinSetOption filetype=.* %{
+        remove-hooks window rust-inlay-hints
+    }
 }
 hook global WinSetOption filetype=(python) %{
     # set-option global lsp_config %{

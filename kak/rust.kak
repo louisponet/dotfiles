@@ -24,12 +24,12 @@ hook global WinSetOption filetype=rust %{
                 execute-keys gl<a-?> "Entering directory" <ret><a-:>
                 # Try to parse the error into capture groups, failing on absolute paths
                 execute-keys s "Entering directory [`']([^']+)'.*\n([^:/][^:]*):(\d+):(?:(\d+):)?([^\n]+)\z" <ret>l
-                set-option buffer make_current_error_line %val{cursor_line}
+                set-option buffer jump_current_line %val{cursor_line}
                 make-open-error "%reg{1}/%reg{2}" "%reg{3}" "%reg{4}" "%reg{5}"
             } catch %{
                 set-register / %opt{make_error_line_pattern}
                 execute-keys <a-h><a-l> s<ret>l
-                set-option buffer make_current_error_line %val{cursor_line}
+                set-option buffer jump_current_line %val{cursor_line}
                 make-open-error "%reg{1}" "%reg{2}" "%reg{3}" "%reg{4}"
             }
         }
