@@ -14,6 +14,7 @@ function rdev
 			set files (find -name  "*.rs")
 		end
 	end
+	set -xg KAK_LSP_FORCE_PROJECT_ROOT (pwd)
 	kak $files -e "evaluate-commands %{
 		buffer $files[1]
 		ride

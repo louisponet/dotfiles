@@ -9,7 +9,7 @@ define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-err
 define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
 define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
 
-define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
+# define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
 decl -hidden str next_location_buffer "*symbols*"
 

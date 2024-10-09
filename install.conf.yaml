@@ -34,7 +34,7 @@
             - pacman -S --noconfirm bat
             - pacman -S --noconfirm ripgrep
             - pacman -S --noconfirm fd
-            - yay -S --noconfirm omnisharp-roslyn-bin
+            - yay -S --noconfirm brave
     - cond: 'command -v apt'
       met:
         - shell:

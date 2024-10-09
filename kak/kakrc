@@ -506,6 +506,7 @@ source "%val{config}/bufferinfo.kak"
 #map global user b ':enter-buffers-mode<ret>'              -docstring 'buffers…'
 #map global user B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
 # Suggested aliases
+
 alias global bd delete-buffer
 alias global bf buffer-first
 alias global bl buffer-last
@@ -513,8 +514,10 @@ alias global bo buffer-only
 alias global bo! buffer-only-force
 map global normal q ':enter-buffers-mode<ret>'
 map global buffers q ga -docstring 'alternate'
-map global normal F ': eval -client main %{buffer %opt{current_bufname}}<ret>ga: focus main<ret>'
-map global normal f ': eval -client jump %{buffer %opt{current_bufname}}<ret>ga'
+
+map global normal F ': evaluate-commands -try-client main -verbatim -- edit -existing -- %val{bufname} %val{cursor_line} %val{cursor_column}<ret>: focus main<ret>'
+map global normal <a-F> ': evaluate-commands -try-client main -verbatim -- edit -existing -- %val{bufname} %val{cursor_line} %val{cursor_column}<ret>'
+map global normal f ': evaluate-commands -try-client %opt{jumpclient} -verbatim -- edit -existing -- %val{bufname} %val{cursor_line} %val{cursor_column}<ret>'
 
 #autosave
 def autosave-start %{

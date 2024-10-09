@@ -34,3 +34,4 @@ end
 
 set hook $(printf "{\"hook\": \"SSH\", \"value\": {\"socket_path\": \"~/.ssh/23581\", \"remote_shell\": \"%s\"}}" "$SHELL##*/" | command od -An -v -tx1 | command tr -d " \n")
 
+set -xg ROCKSDB_LIB_DIR /lib
