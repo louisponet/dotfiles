@@ -10,6 +10,7 @@
     ~/.tmux: tmux/tmux
     ~/.tmux-themepack: tmux/tmux-themepack
     ~/.config/i3: i3
+    ~/.cargo/env.fish: cargo/env.fish
     ~/bin/julia: bin/julia
     ~/.julia/config/startup.jl: julia/startup.jl
     ~/.config/fish: fish
