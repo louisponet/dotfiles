@@ -105,8 +105,8 @@ def x %{
     kill
 }
 map global user x x
-map global user e ':make-next-error<ret>'
-map global user E ':make-previous-error<ret>'
+map global user e ': make-next-error<ret>'
+map global user E ': make-previous-error<ret>'
 map global normal <s-tab> '<c-o>'
 map global normal D ';xd'
 map global normal Y ';xy'
@@ -130,6 +130,7 @@ map global user j ': nop %sh{tmux select-pane -D}<ret>' -docstring 'tmux select 
 map global user T ': tmux-focus-tools<ret>' -docstring 'focus Tools'
 
 map global normal <c-m> ': make<ret>'
+
 # Keybindings to allow goto with shift (because i'm slow)
 # map global goto -docstring 'line end' <L> l
 # map global goto -docstring 'line begin' <H> h
@@ -490,6 +491,7 @@ plug "andreyorst/powerline.kak" defer powerline %{
         powerline-start
     }
 }
+
 plug 'delapouite/kakoune-cd' %{
   # Suggested mapping
   map global user c ': enter-user-mode cd<ret>' -docstring 'cd'
