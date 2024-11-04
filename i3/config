@@ -265,6 +265,16 @@ assign [class="Slack"] $workspace7
 assign [class="discord"] $workspace7
 focus_follows_mouse no
 # workspace default monitors
+workspace $workspace1 output DP-4
+workspace $workspace2 output DP-4
+workspace $workspace3 output DP-4
+workspace $workspace4 output DP-4
+workspace $workspace5 output DP-4
+workspace $workspace6 output  DP-2
+workspace $workspace7 output  DP-2
+workspace $workspace8 output  DP-2
+workspace $workspace9 output  DP-0
+workspace $workspace10 output DP-0
 # workspace $workspace1 output DP-1
 # workspace $workspace2 output DP-1
 # workspace $workspace3 output DP-1
@@ -275,16 +285,6 @@ focus_follows_mouse no
 # workspace $workspace8 output  DP-3
 # workspace $workspace9 output  DP-3
 # workspace $workspace10 output DP-3
-workspace $workspace1 output DisplayPort-0
-workspace $workspace2 output DisplayPort-0
-workspace $workspace3 output DisplayPort-0
-workspace $workspace4 output DisplayPort-0
-workspace $workspace5 output DisplayPort-0
-workspace $workspace6 output  DisplayPort-1
-workspace $workspace7 output  DisplayPort-1
-workspace $workspace8 output  DisplayPort-1
-workspace $workspace9 output  DisplayPort-1
-workspace $workspace10 output DisplayPort-1
 
 # key-bindings
 bindsym $mod+Shift+f exec brave --force-device-scale-factor=1.5
