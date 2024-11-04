@@ -14,6 +14,7 @@ bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
 bindsym $mod+l focus right
+bindsym $mod+o exec ~/.config/i3/scripts/blur-lock
 
 # lock
 bindsym $mod+Shift+x exec i3lock --color 475263
@@ -258,20 +259,32 @@ bindsym $mod+t exec --no-startup-id rofi -show window \
 
 # default workspaces
 assign [class="Firefox"] $workspace6
+assign [class="brave"] $workspace6
 assign [class="GitKraken"] $workspace8
 assign [class="Slack"] $workspace7
+assign [class="discord"] $workspace7
 focus_follows_mouse no
 # workspace default monitors
-workspace $workspace1 output DP-1
-workspace $workspace2 output DP-1
-workspace $workspace3 output DP-1
-workspace $workspace4 output DP-1
-workspace $workspace5 output DP-1
-workspace $workspace6 output  DP-3
-workspace $workspace7 output  DP-3
-workspace $workspace8 output  DP-3
-workspace $workspace9 output  DP-3
-workspace $workspace10 output DP-3
+# workspace $workspace1 output DP-1
+# workspace $workspace2 output DP-1
+# workspace $workspace3 output DP-1
+# workspace $workspace4 output DP-1
+# workspace $workspace5 output DP-1
+# workspace $workspace6 output  DP-3
+# workspace $workspace7 output  DP-3
+# workspace $workspace8 output  DP-3
+# workspace $workspace9 output  DP-3
+# workspace $workspace10 output DP-3
+workspace $workspace1 output DisplayPort-0
+workspace $workspace2 output DisplayPort-0
+workspace $workspace3 output DisplayPort-0
+workspace $workspace4 output DisplayPort-0
+workspace $workspace5 output DisplayPort-0
+workspace $workspace6 output  DisplayPort-1
+workspace $workspace7 output  DisplayPort-1
+workspace $workspace8 output  DisplayPort-1
+workspace $workspace9 output  DisplayPort-1
+workspace $workspace10 output DisplayPort-1
 
 # key-bindings
 bindsym $mod+Shift+f exec brave --force-device-scale-factor=1.5
@@ -279,7 +292,7 @@ bindsym $mod+Shift+n exec thunar
 bindsym $mod+Shift+s exec slack
 bindsym $mod+Shift+z exec zeal
 bindsym $mod+Shift+b exec /home/ponet/bin/startup_setup
-bindsym $mod+Shift+v exec xrandr --output DP-1 --off --output DP-3 --off --output eDP-1 --on --mode 3840x2160 --pos 0x0
+#bindsym $mod+Shift+v exec xrandr --output DP-1 --off --output DP-3 --off --output eDP-1 --on --mode 3840x2160 --pos 0x0
 
 
 bindsym $mod+Return exec kitty

@@ -71,9 +71,9 @@ map global normal + 's=<ret>&,'
 
 # General
 set-option global ui_options %{ "ncurses_enable_mouse" = "true"}
-# hook global ModeChange .*:insert:normal %{
-#     set-option global idle_timeout 750
-# }
+hook global ModeChange .*:insert:normal %{
+    set-option global idle_timeout 50
+}
 hook global ModeChange .*:normal:insert %{
     set-option global idle_timeout 500
 }
