@@ -8,11 +8,8 @@ function rdev
 			set files $files (eval $v)
 		end
 	else
-		if command -v fd &> /dev/null
-			set files (fd .rs)
-		else
-			set files (find -name  "*.rs")
-		end
+		set files (fd -e .rs) (fd Cargo.toml)
+
 	end
 	set -xg KAK_LSP_FORCE_PROJECT_ROOT (pwd)
 	kak $files -e "evaluate-commands %{

@@ -342,9 +342,8 @@ exec --no-startup-id /usr/bin/dunst
 exec --no-startup-id sleep 1 && feh --bg-fill /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
 
 # set powersavings for display:
-exec --no-startup-id xset s 480 dpms 600 600 600
-exec_always --no-startup-id xset r rate 230 45
-
+exec --no-startup-id xset s 60 dpms 600 600 600
+exec --no-startup-id xss-lock -- -n i3lock -i /usr/share/endeavouros/backgrounds/endeavouros-wallpaper.png
 
 # Brightness
 bindsym $mod+F1 exec $HOME/bin/dimmer.sh 1

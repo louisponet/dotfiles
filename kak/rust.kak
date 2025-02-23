@@ -17,16 +17,13 @@ hook global WinSetOption -once filetype=rust %{
     set-option global gdb_program 'rust-gdb'
     map global normal <C-F5> ': rs-start-gdb<ret>'
 
-    define-command clippy %{
-        execute-keys ': make +nightly-2024-10-01 clippy --all-features --no-deps -- -D warnings<ret>'
-    }
-
     declare-user-mode make
 
     map global normal <a-m> ': enter-user-mode make<ret>'
     map global make b ': make build<ret>' -docstring 'build'
-    map global make c ': clippy<ret>' -docstring 'run clippy'
+    map global make c ': make clippy --all-features --no-deps -- -D warnings<ret>' -docstring 'clippy'
     map global make t ': make test<ret>' -docstring 'test'
+    map global make f ': make +nightly-2024-10-01 fmt<ret>' -docstring 'fmt'
 
     define-command -hidden -override make-jump %{
         evaluate-commands -save-regs a/ %{

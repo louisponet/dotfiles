@@ -39,15 +39,16 @@ hook global WinSetOption filetype=(c|cpp|cc|rust|javascript|typescript|julia|for
     map global lsp N '<esc>: lsp-previous-location %opt{next_location_buffer}<ret>' -docstring 'next location'
     map global normal <c-k> '<esc>: lsp-selection-range<ret>'
     map global lsp-selection-range <c-k> '<esc>: lsp-selection-range-select up<ret>'
+    map global normal <c-q> ":enter-user-mode lsp<ret>o"
     lsp-enable-window
 }
 
-hook global WinSetOption filetype=rust %{
-    hook window -group rust-inlay-hints BufWritePost .* rust-analyzer-inlay-hints
-    hook -once -always window WinSetOption filetype=.* %{
-        remove-hooks window rust-inlay-hints
-    }
-}
+# hook global WinSetOption filetype=rust %{
+#     hook window -group rust-inlay-hints BufWritePost .* rust-analyzer-inlay-hints
+#     hook -once -always window WinSetOption filetype=.* %{
+#         remove-hooks window rust-inlay-hints
+#     }
+# }
 hook global WinSetOption filetype=(python) %{
     # set-option global lsp_config %{
     #         [language.python.settings._]
@@ -58,7 +59,13 @@ hook global WinSetOption filetype=(python) %{
     set-option global lsp_server_configuration pyls.plugins.pycodestyle.ignore=["E501","E128","E221"]
     set-option global lsp_server_configuration pyls.configurationSources=["flake8"]
     echo -debug "Enabling LSP for filtetype %opt{filetype}"
-    map global user l ":enter-user-mode lsp<ret>"
+    map global normal <c-q> ":enter-user-mode lsp<ret>o"
+    lsp-enable-window
+}
+
+hook global WinSetOption filetype=(toml) %{
+    set-option window lsp_hover_anchor false
+    echo -debug "Enabling LSP for filtetype %opt{filetype}"
     map global normal <c-q> ":enter-user-mode lsp<ret>o"
     lsp-enable-window
 }
