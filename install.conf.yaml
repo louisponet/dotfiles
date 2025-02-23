@@ -6,18 +6,15 @@
 
 - link:
     ~/.gitconfig: gitconfig
-    ~/.tmux.conf: tmux/tmux.conf
-    ~/.tmux: tmux/tmux
-    ~/.tmux-themepack: tmux/tmux-themepack
     ~/.config/i3: i3
     ~/.cargo/env.fish: cargo/env.fish
     ~/bin/julia: bin/julia
     ~/.julia/config/startup.jl: julia/startup.jl
     ~/.config/fish: fish
     ~/.config/kitty: kitty
-    ~/.config/kak-lsp: kak-lsp
-    ~/.config/kak: kak
     ~/.local/share/omf: omf
+    ~/.config/zellij: zellij
+    ~/.config/helix: helix
 
 - sudo:
   - if:
@@ -26,7 +23,6 @@
         - shell:
             - [pacman -Syy, updating pacman]
             - pacman -S --noconfirm fish
-            - pacman -S --noconfirm tmux
             - pacman -S --noconfirm git
             - pacman -S --noconfirm btop
             - pacman -S --noconfirm lazygit
@@ -35,16 +31,19 @@
             - pacman -S --noconfirm bat
             - pacman -S --noconfirm ripgrep
             - pacman -S --noconfirm fd
+            - pacman -S --noconfirm zellij
+            - pacman -S --noconfirm helix
             - yay -S --noconfirm brave
     - cond: 'command -v apt'
       met:
         - shell:
           - apt -y install fish
-          - apt -y install tmux
           - apt -y install git
           - apt -y install btop
           - apt -y install lazygit
           - apt -y install kitty
+          - apt -y install zellij
+          - apt -y install helix
 - shell:
   - chsh -s $(which fish)
 
@@ -56,27 +55,9 @@
     unmet:
       - shell:
           - [scripts/install_rust, installing rust]
-- if:
-    cond: command -v kak &> /dev/null
-    unmet:
-      - git:
-          '~/Software/kakoune':
-            url: 'https://github.com/mawww/kakoune'
-            branch: v2023.08.05
-          '~/Software/kak-lsp':
-            url: 'https://github.com/kak-lsp/kak-lsp'
-      - shell:
-          - [scripts/compile_kakoune, compile kakoune]
-      
+     
 - if:
     cond: ls ~/.dotfiles_local/ &> /dev/null
     met:
       - shell:
           - [~/.dotfiles_local/install, installing local dotfiles]
-- if:
-    cond: ls ~/.config/kak/plugins/kak-ansi/ &> /dev/null
-    unmet:
-      - git:
-          '~/.config/kak/plugins/kak-ansi':
-            url: 'https://github.com/eraserhd/kak-ansi'
-            branch: v0.2.5

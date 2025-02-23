@@ -1,0 +1,17 @@
+
+
+[[language]]
+name = "rust"
+auto-format = false
+
+[language-server.rust-analyzer.experimental]
+commands.commands = ["rust-analyzer.runSingle"]
+hoverActions = true
+[language_server.rust-analyzer.settings.rust-analyzer]
+# See https://rust-analyzer.github.io/manual.html#configuration
+# cargo.features = []
+# check.command = "clippy"
+hover.memoryLayout.alignment = "both"
+hover.memoryLayout.offset = "both"
+hover.memoryLayout.nice = true
+rustfmt.extraArgs = ["+nightly"]

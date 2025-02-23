@@ -1,0 +1,103 @@
+theme = "qiita"
+
+[editor]
+cursorline = true
+true-color = true
+end-of-line-diagnostics = "warning"
+
+[editor.cursor-shape]
+insert = "block"
+
+[editor.auto-save]
+after-delay.enable = true
+after-delay.timeout = 1000
+
+[editor.soft-wrap]
+enable = true
+
+[editor.inline-diagnostics]
+cursor-line = "error"
+
+[editor.indent-guides]
+render = true
+skip-levels = 1
+
+[editor.gutters]
+layout = ["diagnostics", "line-numbers", "spacer", "diff"]
+line-numbers.min-width = 0
+
+[keys.normal]
+L = "extend_char_right"
+H = "extend_char_left"
+K = "extend_line_up"
+J = "extend_line_down"
+B = "extend_prev_word_start"
+E = "extend_next_word_end"
+"#" = "toggle_comments"
+tab = "jump_forward"
+S-tab = "jump_backward"
+C-h = "jump_view_left"
+C-l = "jump_view_right"
+C-j = "jump_view_down"
+C-k = "jump_view_up"
+q = "goto_previous_buffer"
+Q = "goto_next_buffer"
+
+w = "@miw"
+# delete line
+D = "@xd"
+M = "@vmmv"
+
+T = [ # scroll selections up one line
+    "ensure_selections_forward",
+    "extend_to_line_bounds",
+    "extend_char_right",
+    "extend_char_left",
+    "delete_selection",
+    "move_line_up",
+    "add_newline_above",
+    "move_line_up",
+    "replace_with_yanked"
+]
+
+t = [ # scroll selections down one line
+    "ensure_selections_forward",
+    "extend_to_line_bounds",
+    "extend_char_right",
+    "extend_char_left",
+    "delete_selection",
+    "add_newline_below",
+    "move_line_down",
+    "replace_with_yanked"
+]
+
+";" = "command_mode"
+backspace = "keep_primary_selection"
+
+
+[keys.normal.g]
+j = "goto_file_end"
+k = "goto_file_start"
+i = "goto_first_nonwhitespace"
+d = ["goto_definition", "rotate_view"]
+
+[keys.normal.G]
+l = "extend_to_line_end"
+L = "extend_to_line_end"
+h = "extend_to_line_start"
+H = "extend_to_line_start"
+w = "extend_to_word"
+W = "extend_to_word"
+i = "extend_to_first_nonwhitespace"
+R = "extend_to_first_nonwhitespace"
+# these don't exist
+#j = "extend_to_file_end"
+#J = "extend_to_file_end"
+#k = "extend_to_file_start"
+#K = "extend_to_file_start"
+
+[keys.normal.space]
+h = "hover"
+k = "select_references_to_symbol_under_cursor"
+ret = "@:write-all<ret>"
+space = "@:format<ret>"

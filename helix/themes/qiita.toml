@@ -1,0 +1,126 @@
+# Author : Gokul Soumya <gokulps15@gmail.com>
+
+"tag" = { fg = "red" }
+"attribute" = { fg = "cyan" }
+"comment" = { fg = "light-gray", modifiers = ["italic"] }
+"constant" = { fg = "magenta" }
+"constant.numeric" = { fg = "magenta" }
+"constant.builtin" = { fg = "magenta" }
+"constant.character.escape" = { fg = "magenta" }
+"constructor" = { fg = "blue" }
+"function" = { fg = "blue" }
+"function.builtin" = { fg = "blue" }
+"function.macro" = { fg = "red" }
+"keyword" = { fg = "yellow" }
+"keyword.control" = { fg = "yellow" }
+"keyword.control.import" = { fg = "yellow" }
+"keyword.directive" = { fg = "yellow" }
+"keyword.storage" = { fg = "yellow" }
+"label" = { fg = "cyan" }
+"namespace" = { fg = "gold" }
+"operator" = { fg = "yellow" }
+"keyword.operator" = { fg = "yellow" }
+"keyword.storage.modifier" = { fg = "cyan" }
+#"special" = { fg = "blue" }
+"string" = { fg = "purple" }
+"type" = { fg = "lightblue"}
+"type.builtin" = { fg = "cyan" }
+"type.enum.variant" = { fg = "magenta" }
+# "variable" = { fg = "blue" }
+"variable.builtin" = { fg = "magenta" }
+"variable.parameter" = { fg = "white" }
+"variable.other.member" = { fg = "white" }
+
+"markup.heading" = { fg = "red" }
+"markup.raw.inline" = { fg = "green" }
+"markup.bold" = { fg = "gold", modifiers = ["bold"] }
+"markup.italic" = { fg = "purple", modifiers = ["italic"] }
+"markup.strikethrough" = { modifiers = ["crossed_out"] }
+"markup.list" = { fg = "red" }
+"markup.quote" = { fg = "yellow" }
+"markup.link.url" = { fg = "cyan", modifiers = ["underlined"]}
+"markup.link.text" = { fg = "purple" }
+
+"diff.plus" = "green"
+"diff.delta" = "gold"
+"diff.minus" = "red"
+
+"diagnostic.info".underline = { color = "blue", style = "curl" } 
+"diagnostic.hint".underline = { color = "green", style = "curl" } 
+"diagnostic.warning".underline = { color = "yellow", style = "curl" } 
+"diagnostic.error".underline = { color = "red", style = "curl" } 
+"diagnostic.unnecessary" = { modifiers = ["dim"] }
+"diagnostic.deprecated" = { modifiers = ["crossed_out"] }
+"info" = { fg = "blue", modifiers = ["bold"] }
+"hint" = { fg = "green", modifiers = ["bold"] }
+"warning" = { fg = "yellow", modifiers = ["bold"] }
+"error" = { fg = "red", modifiers = ["bold"] }
+
+"ui.background" = { bg = "black" }
+"ui.virtual" = { fg = "faint-gray" }
+"ui.virtual.indent-guide" = { fg = "faint-gray" }
+"ui.virtual.whitespace" = { fg = "light-gray" }
+"ui.virtual.ruler" = { bg = "gray" }
+"ui.virtual.inlay-hint" = { fg = "light-gray" }
+"ui.virtual.jump-label" = { fg = "green", modifiers = ["bold"] }
+
+"ui.cursor" = { fg = "darkgreen", modifiers = ["reversed"] }
+"ui.cursor.primary.normal" = { fg = "green", modifiers = ["reversed"] }
+"ui.cursor.match" = { fg = "darkblue", bg = "white", modifiers = ["reversed"]}
+"ui.cursor.insert" = { fg = "darkblue", modifiers = ["reversed"] }
+"ui.cursor.primary.insert" = { fg = "blue", modifiers = ["reversed"] }
+
+"ui.selection" = { bg = "gray" }
+"ui.selection.primary" = { bg = "gray" }
+
+"ui.cursorline.primary" = { bg = "faint-gray" }
+
+"ui.highlight" = { bg = "gray" }
+"ui.highlight.frameline" = { bg = "#97202a" }
+
+"ui.linenr" = { fg = "light-gray" }
+"ui.linenr.selected" = { fg = "white" }
+
+"ui.statusline" = { fg = "white", bg = "light-black" }
+"ui.statusline.inactive" = { fg = "light-gray", bg = "light-black" }
+"ui.statusline.normal" = { fg = "light-black", bg = "blue", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "light-black", bg = "green", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "light-black", bg = "purple", modifiers = ["bold"] }
+
+"ui.bufferline" = { fg = "light-gray", bg = "light-black" }
+"ui.bufferline.active" = { fg = "light-black", bg = "blue", underline = { color = "light-black", style = "line" } }
+"ui.bufferline.background" = { bg = "light-black" }
+
+"ui.text" = { fg = "white" }
+"ui.text.focus" = { fg = "white", bg = "light-black", modifiers = ["bold"] }
+
+"ui.help" = { fg = "white", bg = "gray" }
+"ui.popup" = { bg = "gray" }
+"ui.window" = { fg = "gray" }
+"ui.menu" = { fg = "white", bg = "gray" }
+"ui.menu.selected" = { fg = "black", bg = "blue" }
+"ui.menu.scroll" = { fg = "white", bg = "light-gray" }
+
+"ui.debug" = { fg = "red" }
+
+[palette]
+
+yellow = "#e0c810"
+blue = "#6EB5FF"
+darkblue = "#0056b3" 
+red = "#FF748B"
+violet = "#9F65CF"
+purple = "#9F65CF"
+green = "#00f76b"
+darkgreen = "#009640"
+gold = "#ad9ea2"
+cyan = "#45D4e8"
+white = "#E3E3E3"
+black = "#1B2529"
+magenta="#d350de"
+light-black = "#2C323C"
+gray = "#32464d"
+faint-gray = "#222f34"
+light-gray = "#586e75"
+linenr = "#4B5263"
+lightblue = "#b3d7ff"
