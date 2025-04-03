@@ -1,7 +1,7 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
 SETUVAR __fish_init_2_3_0:\x1d
-SETUVAR __fish_initialized:3400
+SETUVAR __fish_initialized:3800
 SETUVAR _fish_abbr_jthreads:set\x20\x2dxg\x20JULIA_NUM_THREADS
 SETUVAR _fish_abbr_mux:tmuxinator
 SETUVAR fish_color_autosuggestion:555\x1ebrblack
@@ -22,7 +22,7 @@ SETUVAR fish_color_operator:00a6b2
 SETUVAR fish_color_param:00afff
 SETUVAR fish_color_quote:999900
 SETUVAR fish_color_redirection:00afff
-SETUVAR fish_color_search_match:bryellow\x1e\x2d\x2dbackground\x3dbrblack
+SETUVAR fish_color_search_match:white\x1e\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_color_selection:white\x1e\x2d\x2dbold\x1e\x2d\x2dbackground\x3dbrblack
 SETUVAR fish_color_status:red
 SETUVAR fish_color_user:brgreen
